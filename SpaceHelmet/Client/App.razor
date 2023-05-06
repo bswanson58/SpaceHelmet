@@ -1,12 +1,24 @@
-﻿<Router AppAssembly="@typeof(App).Assembly">
-    <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
-        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
-    </Found>
-    <NotFound>
-        <PageTitle>Not found</PageTitle>
-        <LayoutView Layout="@typeof(MainLayout)">
-            <p role="alert">Sorry, there's nothing at this address.</p>
-        </LayoutView>
-    </NotFound>
-</Router>
+﻿@using SpaceHelmet.Client.Auth
+@using SpaceHelmet.Client.Ui
+
+<Fluxor.Blazor.Web.StoreInitializer/>
+<AuthenticationProvider/>
+
+@inject AnnouncementHandler     ErrorAnnouncer;
+@inject IAppStartup             AppStartup;
+
+@implements IDisposable
+
+@code {
+    protected override void OnInitialized() {
+        base.OnInitialized();
+
+        ErrorAnnouncer.StartAnnouncements();
+        AppStartup.OnStartup();
+    }
+
+    public void Dispose() {
+        ErrorAnnouncer?.Dispose();
+        AppStartup?.Dispose();
+    }
+}

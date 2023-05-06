@@ -1,0 +1,80 @@
+﻿@using SpaceHelmet.Client.Gravatar
+
+@inherits LayoutComponentBase
+
+<MudThemeProvider Theme="@mCurrentTheme"/>
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudAppBar Elevation="1">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu"
+                       Color="Color.Inherit"
+                       Edge="Edge.Start"
+                       OnClick="@(DrawerToggle)" />
+        <MudText Typo="Typo.h5" @onclick="DarkMode">SpaceHelmet</MudText>
+        <MudSpacer />
+        <MudButton Variant="Variant.Text" OnClick="@OnAccount">
+            <Gravatar />
+        </MudButton>
+    </MudAppBar>
+    <MudDrawer @bind-Open="mDrawerOpen"
+               Width="10em"
+               ClipMode="DrawerClipMode.Always"
+               Elevation="2">
+        <NavMenu />
+    </MudDrawer>
+    <MudMainContent>
+        @Body
+    </MudMainContent>
+</MudLayout>
+
+@inject NavigationManager NavigationManager;
+
+@code {
+    bool        mDrawerOpen = true;
+    MudTheme    mCurrentTheme = new ();
+
+    protected override void OnInitialized() {
+        mCurrentTheme = mDefaultTheme;
+    }
+
+    private void DarkMode() =>
+        mCurrentTheme = 
+            mCurrentTheme == mDefaultTheme ? 
+                mDarkTheme : 
+                mDefaultTheme;
+
+    readonly MudTheme mDefaultTheme = new () {
+            Palette = new PaletteLight() {
+                Black = "#272c34"
+            }
+        };
+
+    readonly MudTheme mDarkTheme = new () {
+            Palette = new PaletteLight() {
+                Black = "#27272f",
+                Background = "#32333d",
+                BackgroundGrey = "#27272f",
+                Surface = "#373740",
+                DrawerBackground = "#27272f",
+                DrawerText = "rgba(255,255,255, 0.50)",
+                DrawerIcon = "rgba(255,255,255, 0.50)",
+                AppbarBackground = "#27272f",
+                AppbarText = "rgba(255,255,255, 0.70)",
+                TextPrimary = "rgba(255,255,255, 0.70)",
+                TextSecondary = "rgba(255,255,255, 0.50)",
+                ActionDefault = "#adadb1",
+                ActionDisabled = "rgba(255,255,255, 0.26)",
+                ActionDisabledBackground = "rgba(255,255,255, 0.12)"
+            }
+        };
+
+    private void DrawerToggle() {
+        mDrawerOpen = !mDrawerOpen;
+    }
+
+    private void OnAccount() {
+        NavigationManager.NavigateTo( NavLinks.Account );
+    }
+}

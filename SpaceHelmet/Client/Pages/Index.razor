@@ -1,3 +1,59 @@
 ﻿@page "/"
 
-<h1>Hello, world!</h1>
+@using SpaceHelmet.Client.Auth.Store
+@using SpaceHelmet.Client.Auth.Support
+
+<PageTitle>SpaceHelmet</PageTitle>
+
+<style>
+    .row-grid {
+        display: grid;
+        grid-template-rows: auto auto auto;
+        grid-row-gap: 1em;
+    }
+
+    .center-row {
+        display: grid;
+        grid-template-columns: auto 5px auto;
+        grid-column-gap: 0px;
+    }
+</style>
+
+<MudContainer class="row-grid mt-15">
+    <MudText Typo="Typo.h4" style="justify-self: center;">SpaceHelmet</MudText>
+
+    <MudContainer class="center-row">
+        <MudImage Style="justify-self: right; height: 175px;" Class="mr-4" Src="images/cloud-tags.png" />
+        <MudDivider Vertical="true" FlexItem="true" Class="my-6"/>
+        @if(@AuthInformation.IsAuthValid ) {
+            <MudContainer Class="d-flex flex-column justify-center align-start">
+                <MudButton ButtonType="ButtonType.Button" Variant="Variant.Text" OnClick="@OnLogout">Logout</MudButton>
+                <MudButton ButtonType="ButtonType.Button" Variant="Variant.Text" OnClick="@OnRegister">Register</MudButton>
+            </MudContainer>
+        }
+        else {
+            <MudContainer Class="d-flex flex-column justify-center align-start">
+                <MudButton ButtonType="ButtonType.Button" Variant="Variant.Text" OnClick="@OnLogin">Login</MudButton>
+                <MudButton ButtonType="ButtonType.Button" Variant="Variant.Text" OnClick="@OnRegister">Register</MudButton>
+            </MudContainer>
+        }
+    </MudContainer>
+
+    <MudText Typo="Typo.body1" style="justify-self: center;">Safety In Space</MudText>
+</MudContainer>
+
+@inject AuthFacade          AuthFacade;
+@inject IAuthInformation    AuthInformation;
+@code {
+    private void OnRegister() {
+        AuthFacade.RegisterUser();
+    }
+
+    private void OnLogin() {
+        AuthFacade.LoginUser();
+    }
+
+    private void OnLogout() {
+        AuthFacade.LogoutUser();
+    }
+}

@@ -1,0 +1,9 @@
+﻿<MudStack Row="true">
+    <MudProgressCircular Size="Size.Small" Color="Color.Default" Class="mx-2" Indeterminate="true" />
+    <MudText Class="d-flex align-center" Typo="Typo.body1">@AnnouncementMessage</MudText>
+</MudStack>
+
+@code {
+    [Parameter]
+    public string   AnnouncementMessage { get; set; } = String.Empty;
+}

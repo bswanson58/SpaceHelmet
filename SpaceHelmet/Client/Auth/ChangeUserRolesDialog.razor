@@ -1,0 +1,72 @@
+﻿@using Microsoft.AspNetCore.Components.Forms
+@using Blazored.FluentValidation
+@using SpaceHelmet.Shared.Constants
+@using SpaceHelmet.Shared.Dto.Auth
+@using SpaceHelmet.Shared.Entities
+
+<EditForm Model="@Request" OnValidSubmit="@OnSubmit">
+    <FluentValidationValidator />
+    <MudDialog>
+        <DialogContent>
+            <MudFocusTrap DefaultFocus="DefaultFocus.FirstChild">
+                <MudText Typo="Typo.body1">Select the roles for @Request.User.DisplayName:</MudText>
+                <MudCheckBox
+                    Dense="true"
+                    Disabled="@mIsDisabled"
+                    Label="Administrator"
+                    @bind-Checked="@mIsAdmin"/>
+                <MudCheckBox
+                    Dense="true"
+                    Disabled="@mIsDisabled"
+                    Label="User"
+                    @bind-Checked="@mIsUser"/>
+                <MudDivider DividerType="DividerType.Middle" Class="my-2"/>
+                <MudCheckBox
+                    Dense="true"
+                    Label="Disable User"
+                    @bind-Checked="@mIsDisabled"/>
+            </MudFocusTrap>
+        </DialogContent>
+        <DialogActions>
+            <MudButton OnClick="OnCancel">Cancel</MudButton>
+            <MudButton ButtonType="ButtonType.Submit" Color="Color.Primary">Ok</MudButton>
+        </DialogActions>
+    </MudDialog>
+</EditForm>
+
+@code {
+    [CascadingParameter]
+    public MudDialogInstance?       MudDialog { get; set; }
+    [Parameter]
+    public ChangeUserRolesRequest   Request { get; set; } = new( ShUser.Default );
+
+    private bool mIsAdmin;
+    private bool mIsUser;
+    private bool mIsDisabled;
+
+    protected override void OnParametersSet() {
+        base.OnParametersSet();
+
+        mIsDisabled = !Request.User.RoleClaims.Any();
+        mIsAdmin = Request.User.RoleClaims.Contains( ClaimValues.ClaimRoleAdmin );
+        mIsUser = Request.User.RoleClaims.Contains( ClaimValues.ClaimRoleUser );
+    }
+
+    private void OnSubmit() {
+        Request.Roles.Clear();
+        Request.DisableRoles = mIsDisabled || (!mIsAdmin && !mIsUser );
+
+        if(!mIsDisabled ) {
+            if( mIsAdmin ) {
+                Request.Roles.Add( ClaimValues.ClaimRoleAdmin );
+            }
+            if( mIsUser ) {
+                Request.Roles.Add( ClaimValues.ClaimRoleUser );
+            }
+        }
+
+        MudDialog?.Close( DialogResult.Ok( Request ));
+    }
+
+    private void OnCancel() => MudDialog?.Cancel();
+}

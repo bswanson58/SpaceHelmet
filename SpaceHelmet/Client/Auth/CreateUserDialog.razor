@@ -1,0 +1,59 @@
+﻿@using Microsoft.AspNetCore.Components.Forms
+@using Blazored.FluentValidation
+@using SpaceHelmet.Shared.Dto.Auth
+@using Microsoft.AspNetCore.Components
+
+<EditForm Model="@User" OnValidSubmit="@OnSubmit">
+    <FluentValidationValidator/>
+    <MudDialog>
+        <DialogContent>
+            <MudFocusTrap DefaultFocus="DefaultFocus.FirstChild">
+                <MudTextField
+                    T="string" 
+                    Immediate="true"
+                    Label="User Name"
+                    HelperText="Display name of the user"
+                    HelperTextOnFocus="true"
+                    @bind-Value="@User.Name"/>
+                <ValidationMessage For="@(() => User.Name )"/>
+                <MudTextField
+                    T="string"
+                    Label="User Email Address"
+                    HelperText="Login name (email address) of the user"
+                    HelperTextOnFocus="true"
+                    @bind-Value="@User.Email"/>
+                <ValidationMessage For="@(() => User.Email )"/>
+                <MudTextField
+                    T="string"
+                    InputType="InputType.Password"
+                    Label="Password"
+                    HelperText="Password for the user (must be at least 6 characters)"
+                    HelperTextOnFocus="true"
+                    @bind-Value="@User.Password"/>
+                <ValidationMessage For="@(() => User.Password )"/>
+                <MudTextField
+                    T="string"
+                    InputType="InputType.Password"
+                    Label="Confirm Password"
+                    HelperText="Confirmation of user password"
+                    HelperTextOnFocus="true"
+                    @bind-Value="@User.ConfirmPassword"/>
+                <ValidationMessage For="@(() => User.ConfirmPassword )"/>
+            </MudFocusTrap>
+        </DialogContent>
+        <DialogActions>
+            <MudButton OnClick="OnCancel">Cancel</MudButton>
+            <MudButton ButtonType="ButtonType.Submit" Color="Color.Primary">Ok</MudButton>
+        </DialogActions>
+    </MudDialog>
+</EditForm>
+
+@code {
+    [CascadingParameter] 
+    public MudDialogInstance ?  MudDialog { get; set; }
+    [Parameter]
+    public CreateUserRequest    User { get; set; } = new();
+
+    private void OnSubmit() => MudDialog?.Close( DialogResult.Ok( User ));
+    private void OnCancel() => MudDialog?.Cancel();
+}

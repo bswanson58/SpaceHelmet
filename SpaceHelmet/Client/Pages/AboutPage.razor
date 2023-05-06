@@ -1,0 +1,61 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@using System.Reflection
+@using SpaceHelmet.Client.Shared
+@using SpaceHelmet.Shared.Constants
+
+@attribute [Route( NavLinks.About )]
+@attribute [Authorize( Roles = ClaimValues.cUser )]
+
+<style>
+    .version-grid {
+        display: grid;
+        grid-template-columns: 5em 25em;
+        grid-template-rows: auto auto auto;
+        grid-column-gap: 0.5em;
+        grid-row-gap: 0;
+    }
+</style>
+
+<PageTitle>SpaceHelmet - About</PageTitle>
+
+<MudContainer Class="pa-0 mt-4 ml-8">
+    <MudStack Spacing="0" Style="max-width: max-content">
+        <MudText Typo="Typo.h6" Class="mt-8">SpaceHelmet:</MudText>
+        <MudText Typo="Typo.body1" Class="ml-4">
+            SpaceHelmet protects you in space.
+        </MudText>
+        <MudText Typo="Typo.h6" Class="mt-8">Application Information:</MudText>
+        <div class="version-grid">
+            <MudText Typo="Typo.body1" Class="d-flex justify-end subdue">by:</MudText>
+            <MudText Typo="Typo.body1" Class="d-flex">@mCompany</MudText>
+            <MudText Typo="Typo.body1" Class="d-flex justify-end subdue" />
+            <MudText Typo="Typo.body1" Class="d-flex">@mCopyright</MudText>
+            <MudText Typo="Typo.body1" Class="d-flex justify-end subdue">Version:</MudText>
+            <MudText Typo="Typo.body1" Class="d-flex">@mVersion</MudText>
+        </div>
+    </MudStack>
+</MudContainer>
+@code {
+    private string  mVersion = String.Empty;
+    private string  mCompany = String.Empty;
+    private string  mCopyright = String.Empty;
+
+    protected override void OnInitialized() {
+        base.OnInitialized();
+
+        mVersion = Assembly
+            .GetExecutingAssembly()
+            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
+            .InformationalVersion ?? String.Empty;
+
+        mCompany = Assembly
+            .GetExecutingAssembly()
+            .GetCustomAttribute<AssemblyCompanyAttribute>()?
+            .Company ?? String.Empty;
+
+        mCopyright = Assembly
+            .GetExecutingAssembly()
+            .GetCustomAttribute<AssemblyCopyrightAttribute>()?
+            .Copyright ?? String.Empty;
+    }
+}

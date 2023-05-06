@@ -1,0 +1,68 @@
+﻿@using Microsoft.AspNetCore.Components.Forms
+@using Blazored.FluentValidation
+@using SpaceHelmet.Client.Auth.Store
+@using SpaceHelmet.Client.Shared
+@using SpaceHelmet.Shared.Dto.Auth
+@using Fluxor
+
+@attribute [Route( NavLinks.Login )]
+
+<PageTitle>CloudTags - Login</PageTitle>
+
+<style>
+    .layout-grid {
+        display: grid;
+        grid-template-columns: 3fr 5fr 5fr;
+        grid-column-gap: 0;
+    }
+
+    .dialog-grid {
+        display: grid;
+        grid-template-rows: 9em auto auto auto auto
+    }
+</style>
+
+<div class="layout-grid">
+    <MudContainer/>
+    <EditForm Model="@UserInput" OnValidSubmit="@OnSubmit">
+        <FluentValidationValidator/>
+        <div class="dialog-grid">
+            <MudContainer/>
+            <MudText Typo="Typo.h6" Class="mb-3">Login</MudText>
+            <MudFocusTrap DefaultFocus="DefaultFocus.FirstChild">
+                <MudTextField T="string"
+                              Immediate="true"
+                              Label="User Name"
+                              HelperText="Login name (email address)"
+                              HelperTextOnFocus="true"
+                              @bind-Value="@UserInput.LoginName"/>
+                <ValidationMessage For="@(() => UserInput.LoginName)"/>
+                <MudTextField T="string"
+                              InputType="InputType.Password"
+                              Label="Password"
+                              HelperText="Password for the user (must be at least 6 characters)"
+                              HelperTextOnFocus="true"
+                              @bind-Value="@UserInput.Password"/>
+                <ValidationMessage For="@(() => UserInput.Password)"/>
+                <MudStack Row="true" Class="d-flex justify-end">
+                    <MudButton ButtonType="ButtonType.Submit" Disabled="@AuthState.Value.ApiCallInProgress"
+                               Color="Color.Primary">Login</MudButton>
+                </MudStack>
+            </MudFocusTrap>
+        </div>
+    </EditForm>
+</div>
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@inject IState<AuthState>   AuthState;
+@inject AuthFacade          AuthFacade;
+
+@code {
+    [Parameter]
+    public LoginUserRequest UserInput { get; set; } = new();
+
+    private void OnSubmit() {
+        AuthFacade.LoginUser( UserInput );
+    }
+}

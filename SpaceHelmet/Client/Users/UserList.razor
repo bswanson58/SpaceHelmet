@@ -1,0 +1,22 @@
+﻿@using Fluxor
+@using SpaceHelmet.Client.Users.Store
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+<MudText Typo="Typo.h6">Users:</MudText>
+
+@foreach( var user in UserState.Value.Users ) {
+    <UserListItem User="@user" />
+}
+
+@inject IState<UserState>   UserState;
+@inject UserFacade          UserFacade;
+
+@code {
+
+    protected override void OnInitialized() {
+        base.OnInitialized();
+
+        UserFacade.LoadUsers();
+    }
+}

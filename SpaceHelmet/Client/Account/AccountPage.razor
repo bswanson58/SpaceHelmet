@@ -1,0 +1,64 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@using Fluxor
+@using System.Security.Claims
+@using SpaceHelmet.Client.Auth.Store
+@using SpaceHelmet.Client.Auth.Support
+@using SpaceHelmet.Client.Shared
+@using SpaceHelmet.Shared.Constants
+
+@attribute [Route( NavLinks.Account )]
+@attribute [Authorize( Roles = ClaimValues.cUser )]
+
+<style>
+    .attribute-grid {
+        display: grid;
+        grid-template-columns: 5em 25em;
+        grid-template-rows: auto auto;
+        grid-column-gap: 0.5em;
+        grid-row-gap: 0;
+    }
+</style>
+
+<PageTitle>SpaceHelmet - My Account</PageTitle>
+
+<MudContainer Class="pa-0 mt-4 ml-8">
+    <MudStack Spacing="6" Style="max-width: max-content">
+        <MudText Typo="Typo.h6">Account Information:</MudText>
+        <div class="attribute-grid">
+            <MudText Typo="Typo.body1" Class="d-flex justify-end subdue">Name:</MudText>
+            <MudText Typo="Typo.body1" Class="d-flex">@mUserDisplayName</MudText>
+            <MudText Typo="Typo.body1" Class="d-flex justify-end subdue">Email:</MudText>
+            <MudText Typo="Typo.body1" Class="d-flex">@mEmail</MudText>
+        </div>
+        <MudDivider DividerType="DividerType.Middle" Class="my-3" />
+        <MudStack Style="max-width: max-content">
+            <MudButton Variant="Variant.Outlined" OnClick="@OnChangePassword">Change Password</MudButton>
+            <MudButton Variant="Variant.Outlined" OnClick="@OnLogout">Logout</MudButton>
+        </MudStack>
+    </MudStack>
+</MudContainer>
+
+@inherits Fluxor.Blazor.Web.Components.FluxorComponent
+
+@inject IState<AuthState> AuthState;
+@inject AuthFacade AuthFacade;
+
+@code {
+    private string  mUserDisplayName = String.Empty;
+    private string  mEmail = String.Empty;
+
+    protected override void OnInitialized() {
+        base.OnInitialized();
+
+        mUserDisplayName = JwtParser.GetClaimValue( AuthState.Value.UserToken, ClaimTypes.GivenName );
+        mEmail = JwtParser.GetClaimValue( AuthState.Value.UserToken, ClaimTypes.Email );
+    }
+
+    private void OnLogout() {
+        AuthFacade.LogoutUser();
+    }
+
+    private void OnChangePassword() {
+        AuthFacade.ChangePassword();
+    }
+}

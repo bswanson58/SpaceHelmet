@@ -1,0 +1,13 @@
+﻿@using Microsoft.AspNetCore.Authorization
+@using SpaceHelmet.Client.Shared
+@using SpaceHelmet.Shared.Constants
+
+@attribute [Route( NavLinks.Users )]
+@attribute [Authorize( Roles = ClaimValues.cAdministrator )]
+
+<PageTitle>SpaceHelmet - Users</PageTitle>
+
+<section class="px-3">
+    <UserCommands />
+    <UserList/>
+</section>

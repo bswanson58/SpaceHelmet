@@ -1,0 +1,72 @@
+﻿@using System.Threading
+@using MudBlazor
+@using SpaceHelmet.Client.Auth.Store
+@using SpaceHelmet.Shared.Constants
+@using SpaceHelmet.Shared.Entities
+
+<style>
+    .user-grid {
+        display: grid;
+        grid-template-columns: 3fr 3fr 3fr auto;
+        grid-column-gap: 1em;
+    }
+</style>
+
+<div class="@MouseOverHighlight" @onmouseenter="@OnMouseEnter" @onmouseleave="@OnMouseLeave">
+    <div class="user-grid">
+        <MudText Typo="Typo.body1" Class="ml-2">@User.DisplayName</MudText>
+        <MudText Typo="Typo.body1">@User.LoginName</MudText>
+        <MudText Typo="Typo.body1">@UserRole</MudText>
+        <MudContainer Class="d-flex flex-none align-center justify-center px-2 py-0">
+            <div class="@MouseOverVisibility">
+                <MudStack Row="true" Spacing="0">
+                    <MudIconButton Icon="@Icons.Material.Filled.Password" Size="Size.Small" Title="Change Password"
+                                   OnClick="@OnChangePassword" />
+                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" Title="Edit User Roles"
+                                   OnClick="@OnChangeRoles" />
+                    <MudIconButton Icon="@Icons.Material.Filled.DeleteOutline" Size="Size.Small" Title="Delete User" 
+                                   OnClick="@OnDeleteUser" />
+                </MudStack>
+            </div>
+        </MudContainer>
+    </div>
+</div>
+
+@inject AuthFacade  AuthFacade;
+
+@code {
+    [Parameter]
+    public  ShUser  User { get; set; } = ShUser.Default;
+
+    private bool                mIsMouseOver = false;
+
+    private void OnMouseEnter() => mIsMouseOver = true;
+    private void OnMouseLeave() => mIsMouseOver = false;
+
+    private string MouseOverVisibility => mIsMouseOver ? String.Empty : "invisible";
+    private string MouseOverHighlight => mIsMouseOver ? "mouse-highlight" : String.Empty;
+
+    private void OnChangePassword() {
+        AuthFacade.ChangePassword();
+    }
+
+    private void OnChangeRoles() {
+        AuthFacade.ChangeUserRoles( User );
+    }
+
+    private void OnDeleteUser() { }
+
+    private string UserRole {
+        get {
+            if( User.RoleClaims.Contains( ClaimValues.ClaimRoleAdmin )) {
+                return ClaimValues.ClaimRoleAdmin;
+            }
+
+            if( User.RoleClaims.Contains( ClaimValues.ClaimRoleUser )) {
+                return ClaimValues.ClaimRoleUser;
+            }
+
+            return "disabled";
+        }
+    } 
+}

@@ -1,0 +1,23 @@
+﻿@using MudBlazor
+
+<MudDialog>
+    <DialogContent>
+        <MudStack>
+            <MudText Typo="Typo.body1">@Request</MudText>
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="OnNo">Cancel</MudButton>
+        <MudButton OnClick="OnYes" Color="Color.Primary">Confirm</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [Parameter]
+    public string               Request { get; set; } = String.Empty;
+    [CascadingParameter]
+    public MudDialogInstance?   MudDialog { get; set; }
+
+    private void OnYes() => MudDialog?.Close( DialogResult.Ok( String.Empty ));
+    private void OnNo() => MudDialog?.Cancel();
+}
