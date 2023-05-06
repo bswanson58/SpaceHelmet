@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33627.172
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tooling", "Tooling", "{86D7B430-366E-4CE5-B3B2-C17ED33A64D2}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		Directory.Build.props = Directory.Build.props
+	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpaceHelmet.Server", "SpaceHelmet\Server\SpaceHelmet.Server.csproj", "{8DCD9AEE-3C81-487D-A5CE-899BAB550D33}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpaceHelmet.Client", "SpaceHelmet\Client\SpaceHelmet.Client.csproj", "{6D3BE247-CBCF-40D6-BE1E-8C389315EE77}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpaceHelmet.Shared", "SpaceHelmet\Shared\SpaceHelmet.Shared.csproj", "{156D04B7-2BA8-4599-9308-5443568724ED}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8DCD9AEE-3C81-487D-A5CE-899BAB550D33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DCD9AEE-3C81-487D-A5CE-899BAB550D33}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DCD9AEE-3C81-487D-A5CE-899BAB550D33}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DCD9AEE-3C81-487D-A5CE-899BAB550D33}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D3BE247-CBCF-40D6-BE1E-8C389315EE77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D3BE247-CBCF-40D6-BE1E-8C389315EE77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D3BE247-CBCF-40D6-BE1E-8C389315EE77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D3BE247-CBCF-40D6-BE1E-8C389315EE77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{156D04B7-2BA8-4599-9308-5443568724ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{156D04B7-2BA8-4599-9308-5443568724ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{156D04B7-2BA8-4599-9308-5443568724ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{156D04B7-2BA8-4599-9308-5443568724ED}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {716B286B-EDF0-4DB5-8ABE-45014229B552}
+	EndGlobalSection
+EndGlobal
