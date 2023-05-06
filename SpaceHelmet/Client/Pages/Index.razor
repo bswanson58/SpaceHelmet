@@ -15,7 +15,7 @@
     .center-row {
         display: grid;
         grid-template-columns: auto 5px auto;
-        grid-column-gap: 0px;
+        grid-column-gap: 0;
     }
 </style>
 
@@ -23,7 +23,7 @@
     <MudText Typo="Typo.h4" style="justify-self: center;">SpaceHelmet</MudText>
 
     <MudContainer class="center-row">
-        <MudImage Style="justify-self: right; height: 175px;" Class="mr-4" Src="images/cloud-tags.png" />
+        <MudImage Style="justify-self: right; height: 175px;" Class="mr-4" Src="images/squirrel-icon.png" />
         <MudDivider Vertical="true" FlexItem="true" Class="my-6"/>
         @if(@AuthInformation.IsAuthValid ) {
             <MudContainer Class="d-flex flex-column justify-center align-start">
