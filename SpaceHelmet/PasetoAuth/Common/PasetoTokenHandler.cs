@@ -33,7 +33,7 @@ namespace PasetoAuth.Common {
 
             var pasetoBuilder = new PasetoBuilder()
                 .Use( ProtocolVersion.V4, Purpose.Local )
-                .WithKey( Encoding.Default.GetBytes( mValidationParameters.SecretKey ), Encryption.SymmetricKey )
+                .WithKey( Encoding.UTF8.GetBytes( mValidationParameters.SecretKey ), Encryption.SymmetricKey )
                 .Audience( audience )
                 .Issuer( issuer )
                 .IssuedAt( now )
@@ -79,7 +79,7 @@ namespace PasetoAuth.Common {
             };
             var decodedToken = new PasetoBuilder()
                 .Use( ProtocolVersion.V4, Purpose.Local )
-                .WithKey( Encoding.Default.GetBytes( mValidationParameters.SecretKey ), Encryption.SymmetricKey )
+                .WithKey( Encoding.UTF8.GetBytes( mValidationParameters.SecretKey ), Encryption.SymmetricKey )
                 .Decode( token, valParams );
 
             if( decodedToken.IsValid ) {
