@@ -12,11 +12,9 @@ namespace PasetoAuth.Options {
                 throw new InvalidOperationException( "Secret key must have 32 chars." );
             }
 
-            if(( options.UseRefreshToken.HasValue ) && 
-               ( options.UseRefreshToken.Value )) {
-                if( options.PasetoRefreshTokenProvider == null ) {
-                    throw new InvalidOperationException( "You must provide a Paseto Refresh Token provider" );
-                }
+            if(( options.UseRefreshToken == true ) && 
+               ( options.PasetoRefreshTokenProvider == null )) {
+                throw new InvalidOperationException( "You must provide a Paseto Refresh Token provider" );
             }
         }
     }

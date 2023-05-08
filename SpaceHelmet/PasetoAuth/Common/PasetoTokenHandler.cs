@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 using Paseto;
 using Paseto.Builder;
-using Paseto.Cryptography;
+using Paseto.Cryptography.Key;
 using PasetoAuth.Exceptions;
 using PasetoAuth.Interfaces;
 using PasetoAuth.Options;
@@ -30,12 +30,13 @@ namespace PasetoAuth.Common {
             var expirationDate = descriptor.Expires ?? now.AddSeconds( mValidationParameters.DefaultExpirationTime );
             var audience = descriptor.Audience ?? mValidationParameters.Audience;
             var issuer = descriptor.Issuer ?? mValidationParameters.Issuer;
+
             var pasetoBuilder = new PasetoBuilder()
                 .Use( ProtocolVersion.V4, Purpose.Local )
                 .WithKey( Encoding.Default.GetBytes( mValidationParameters.SecretKey ), Encryption.SymmetricKey )
-                .AddClaim( RegisteredClaims.Audience, audience )
-                .AddClaim( RegisteredClaims.Issuer, issuer )
-                .AddClaim( PasetoRegisteredClaimsNames.IssuedAt, now )
+                .Audience( audience )
+                .Issuer( issuer )
+                .IssuedAt( now )
                 .AddFooter( footer )
                 .Expiration( expirationDate );
 
@@ -51,9 +52,8 @@ namespace PasetoAuth.Common {
             pasetoToken.CreatedAt = now;
             pasetoToken.ExpiresAt = expirationDate;
 
-            if(( mValidationParameters.PasetoRefreshTokenProvider != null ) &&
-               ( mValidationParameters.UseRefreshToken.HasValue ) &&
-               ( mValidationParameters.UseRefreshToken.Value )) {
+            if(( mValidationParameters.UseRefreshToken == true ) && 
+               ( mValidationParameters.PasetoRefreshTokenProvider != null )) {
                 pasetoToken.RefreshToken = mValidationParameters.PasetoRefreshTokenProvider
                     .CreateAsync( descriptor.Subject ).Result;
             }
@@ -61,11 +61,15 @@ namespace PasetoAuth.Common {
             return Task.FromResult( pasetoToken );
         }
 
-        public Task<(byte[] publicKey, byte[] privateKey)> GenerateKeyPairAsync( string secretKey ) {
-            Ed25519.KeyPairFromSeed( out var publicKey, out var privateKey,
-                Encoding.ASCII.GetBytes( secretKey ) );
-            return Task.FromResult( (publicKey, privateKey) );
+        public Task<PasetoAsymmetricKeyPair> GenerateKeyPairAsync( string secretKey ) {
+            var bytes = Encoding.UTF8.GetBytes( secretKey );
+            var keyPair = new PasetoBuilder()
+                .Use( ProtocolVersion.V4, Purpose.Public )
+                .GenerateAsymmetricKeyPair( bytes );
+
+            return Task.FromResult( keyPair );
         }
+
 
         public async Task<ClaimsPrincipal> DecodeTokenAsync( string token ) {
             var valParams = new PasetoTokenValidationParameters {

@@ -16,11 +16,9 @@ namespace PasetoAuth {
         private const string                    cAuthorizationHeaderName = "Authorization";
         private readonly IPasetoTokenHandler    mPasetoTokenHandler;
 
-        public PasetoAuthHandler(
-            IOptionsMonitor<PasetoValidationParameters> options,
-            ILoggerFactory logger, UrlEncoder encoder,
-            ISystemClock clock,
-            IPasetoTokenHandler pasetoTokenHandler )
+        public PasetoAuthHandler( IOptionsMonitor<PasetoValidationParameters> options,
+                                  ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock,
+                                  IPasetoTokenHandler pasetoTokenHandler )
             : base( options, logger, encoder, clock ) {
             mPasetoTokenHandler = pasetoTokenHandler;
         }
@@ -42,7 +40,7 @@ namespace PasetoAuth {
             try {
                 ClaimsPrincipal claimsPrincipal;
 
-                if( Options.UseRefreshToken.HasValue && Options.UseRefreshToken.Value ) {
+                if( Options.UseRefreshToken == true ) {
                     if( Options.PasetoRefreshTokenProvider == null ) {
                         throw new InvalidOperationException( "Paseto Refresh Tokens handler not defined" );
                     }
@@ -57,7 +55,7 @@ namespace PasetoAuth {
                     throw new InvalidGrantType();
                 }
 
-                return AuthenticateResult.Success( new AuthenticationTicket( claimsPrincipal, Scheme.Name ) );
+                return AuthenticateResult.Success( new AuthenticationTicket( claimsPrincipal, Scheme.Name ));
             }
             catch( Exception ex ) {
                 Response.Headers["Error-Message"] = ex.Message;
