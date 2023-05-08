@@ -6,6 +6,7 @@ namespace PasetoAuth.Interfaces {
     public interface IPasetoTokenHandler {
         Task<PasetoToken>           WriteTokenAsync( PasetoTokenDescriptor tokenDescriptor, string footer = "" );
         Task<ClaimsPrincipal>       DecodeTokenAsync( string token );
+
         Task<(byte[] publicKey, byte[] privateKey)> GenerateKeyPairAsync( string secretKey );
     }
 }

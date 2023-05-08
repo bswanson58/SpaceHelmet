@@ -41,6 +41,7 @@ namespace PasetoAuth {
 
             try {
                 ClaimsPrincipal claimsPrincipal;
+
                 if( Options.UseRefreshToken.HasValue && Options.UseRefreshToken.Value ) {
                     if( Options.PasetoRefreshTokenProvider == null ) {
                         throw new InvalidOperationException( "Paseto Refresh Tokens handler not defined" );
