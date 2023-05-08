@@ -5,7 +5,15 @@ using System.Security.Claims;
 using System.Text.Json;
 
 namespace SpaceHelmet.Client.Auth.Support {
-    public static class JwtParser {
+    public class JwtTokenParser : ITokenParser {
+        public IEnumerable<Claim>  GetClaims( string token ) => 
+            JwtStaticParser.GetClaims( token );
+
+        public string GetClaimValue( string token, string claimType ) => 
+            JwtStaticParser.GetClaimValue( token, claimType );
+    }
+
+    internal static class JwtStaticParser {
         public static IEnumerable<Claim> GetClaims( string jwt ) {
             var retValue = new List<Claim>();
             var claims = ParseClaimsFromJwt( jwt );

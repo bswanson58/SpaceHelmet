@@ -1,7 +1,9 @@
 using FluentValidation;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using PasetoAuth;
+using PasetoAuth.Common;
+using PasetoAuth.Options;
 using SpaceHelmet.Server.Auth;
 using SpaceHelmet.Server.Database;
 using SpaceHelmet.Server.Database.Entities;
@@ -56,10 +58,26 @@ void ConfigureSecurity( IServiceCollection services, ConfigurationManager config
         .AddEntityFrameworkStores<SpaceHelmetDbContext>()
         .AddDefaultTokenProviders();
 
-//    JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+    var pasetoOptions = configuration
+        .GetSection( nameof( PasetoValidationParameters )).Get<PasetoValidationParameters>() ?? 
+                        new PasetoValidationParameters();
 
+    services.AddAuthentication( options => {
+        options.DefaultChallengeScheme = PasetoDefaults.Bearer;
+        options.DefaultAuthenticateScheme = PasetoDefaults.Bearer;
+    }).AddPaseto( options => {
+        options.Audience = pasetoOptions.Audience;
+        options.DefaultExpirationTime = pasetoOptions.DefaultExpirationTime;
+        options.Issuer = pasetoOptions.Issuer;
+        options.ClockSkew = pasetoOptions.ClockSkew;
+        options.SecretKey = pasetoOptions.SecretKey;
+        options.UseRefreshToken = pasetoOptions.UseRefreshToken;
+        options.ValidateAudience = pasetoOptions.ValidateAudience;
+        options.ValidateIssuer = pasetoOptions.ValidateIssuer;
+    });
+/*
     var jwtSettings = configuration.GetSection( JwtConstants.JwtConfigSettings );
-
+    
     services.AddAuthentication( options => {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -68,6 +86,11 @@ void ConfigureSecurity( IServiceCollection services, ConfigurationManager config
         .AddJwtBearer( options => {
             options.TokenValidationParameters = TokenBuilder.CreateTokenValidationParameters( jwtSettings );
         } );
+*/
+    services.AddAuthorization( auth => {
+        auth.AddPolicy( ClaimValues.cAdministrator, policy => policy.RequireRole( ClaimValues.cAdministrator ));
+        auth.AddPolicy( ClaimValues.cUser, policy => policy.RequireRole( ClaimValues.cUser ));
+    });
 }
 
 void ConfigurePipeline( WebApplication webApp ) {

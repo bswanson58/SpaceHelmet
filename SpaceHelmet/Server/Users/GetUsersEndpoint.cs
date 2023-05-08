@@ -4,11 +4,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SpaceHelmet.Server.Database.Providers;
 using SpaceHelmet.Server.Support;
+using SpaceHelmet.Shared.Constants;
 using SpaceHelmet.Shared.Dto.Users;
 using SpaceHelmet.Shared.Entities;
 
 namespace SpaceHelmet.Server.Users {
-    [Authorize]
+    [Authorize( Roles = ClaimValues.cAdministrator )]
     [Route( GetUsersRequest.Route )]
     public class GetUsersEndpoint : EndpointBaseAsync 
         .WithRequest<GetUsersRequest>

@@ -46,6 +46,7 @@ void ConfigureServices( IServiceCollection services ) {
 
     services.AddScoped( sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient( HttpClientNames.Anonymous ));
 
+    services.AddScoped<ITokenParser, PasetoParser>();
     services.AddScoped<ITokenRefresher, JwtTokenRefresher>();
     services.AddScoped<ITokenExpirationChecker, TokenExpirationChecker>();
 

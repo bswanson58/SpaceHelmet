@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Security.Claims;
 using SpaceHelmet.Shared.Constants;
-using SpaceHelmet.Shared.Support;
 using Fluxor;
 using SpaceHelmet.Client.Auth.Store;
+using SpaceHelmet.Shared.Support;
 
 namespace SpaceHelmet.Client.Auth.Support {
     public interface IAuthInformation {
@@ -20,24 +20,26 @@ namespace SpaceHelmet.Client.Auth.Support {
 
     public class AuthInformation : IAuthInformation {
         private readonly IState<AuthState>      mAuthState;
+        private readonly ITokenParser           mTokenParser;
 
-        public AuthInformation( IState<AuthState> authState ) {
+        public AuthInformation( IState<AuthState> authState, ITokenParser tokenParser ) {
             mAuthState = authState;
+            mTokenParser = tokenParser;
         }
 
         public string UserName => 
             IsAuthValid ? 
-                JwtParser.GetClaimValue( mAuthState.Value.UserToken, ClaimTypes.GivenName ) : 
+                mTokenParser.GetClaimValue( mAuthState.Value.UserToken, ClaimTypes.GivenName ) : 
                 String.Empty;
 
         public string UserEmail =>
             IsAuthValid ?
-                JwtParser.GetClaimValue( mAuthState.Value.UserToken, ClaimTypes.Email ) : 
+                mTokenParser.GetClaimValue( mAuthState.Value.UserToken, ClaimTypes.Email ) : 
                 String.Empty;
 
         public string UserEmailHash =>
             IsAuthValid ?
-                JwtParser.GetClaimValue( mAuthState.Value.UserToken, ClaimValues.ClaimEmailHash ) : 
+                mTokenParser.GetClaimValue( mAuthState.Value.UserToken, ClaimValues.ClaimEmailHash ) : 
                 String.Empty;
 
         public string UserToken =>
@@ -56,14 +58,12 @@ namespace SpaceHelmet.Client.Auth.Support {
             TokenExpirationTime( mAuthState.Value.UserToken );
 
         private TimeSpan TokenExpirationTime( string jwtToken ) {
-            if(!String.IsNullOrWhiteSpace( jwtToken )) {
-                var expiration = JwtParser.GetClaimValue( jwtToken, "exp" );
+            var expiration = mTokenParser.GetClaimValue( jwtToken, ClaimValues.Expiration );
 
-                if(!String.IsNullOrWhiteSpace( expiration )) {
-                    var expTime = DateTimeOffset.FromUnixTimeSeconds( Convert.ToInt64( expiration ));
-                        
-                    return expTime - DateTimeProvider.Instance.CurrentUtcTime;
-                }
+            if(!String.IsNullOrWhiteSpace( expiration )) {
+                var expTime = DateTimeOffset.FromUnixTimeSeconds( Convert.ToInt64( expiration ));
+                    
+                return expTime - DateTimeProvider.Instance.CurrentUtcTime;
             }
 
             return TimeSpan.Zero;

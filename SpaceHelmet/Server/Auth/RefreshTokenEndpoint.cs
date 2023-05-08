@@ -39,12 +39,12 @@ namespace SpaceHelmet.Server.Auth {
 
             var token = await mTokenBuilder.GenerateToken( user );
 
-            user.RefreshToken = mTokenBuilder.GenerateRefreshToken();
-            user.RefreshTokenExpiration = mTokenBuilder.TokenExpiration();
+//            user.RefreshToken = mTokenBuilder.GenerateRefreshToken();
+//            user.RefreshTokenExpiration = mTokenBuilder.TokenExpiration();
 
-            await mUserManager.UpdateAsync( user );
+//            await mUserManager.UpdateAsync( user );
 
-            return Ok( new RefreshTokenResponse( token, user.RefreshToken ));
+            return Ok( new RefreshTokenResponse( token.Token, user.RefreshToken ));
         }
     }
 }

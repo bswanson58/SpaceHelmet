@@ -6,27 +6,39 @@ using SpaceHelmet.Shared.Support;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Security.Principal;
 using System.Text;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Options;
+using PasetoAuth.Common;
+using PasetoAuth.Options;
+using SpaceHelmet.Shared.Entities;
 using JwtConstants = SpaceHelmet.Shared.Constants.JwtConstants;
 
 namespace SpaceHelmet.Server.Auth {
     public interface ITokenBuilder {
-        Task<string>        GenerateToken( DbUser user );
+        Task<PasetoToken>   GenerateToken( DbUser user );
         string              GenerateRefreshToken();
         DateTime            TokenExpiration();
         ClaimsPrincipal     GetPrincipalFromExpiredToken( string token );
     }
 
     public class TokenBuilder : ITokenBuilder {
-        private readonly UserManager<DbUser>    mUserManager;
-        private readonly IConfigurationSection  mJwtSettings;
-        private readonly ILogger<TokenBuilder>  mLog;
+        private readonly UserManager<DbUser>            mUserManager;
+        private readonly IAuthenticationSchemeProvider  mSchemeProvider;
+        private readonly IConfigurationSection          mJwtSettings;
+        private readonly IOptions<PasetoValidationParameters>   mPasetoValidationParameters;
+        private readonly ILogger<TokenBuilder>          mLog;
 
-        public TokenBuilder( UserManager<DbUser> userManager, IConfiguration configuration, ILogger<TokenBuilder> log ) {
+        public TokenBuilder( UserManager<DbUser> userManager, IConfiguration configuration, ILogger<TokenBuilder> log, 
+                             IAuthenticationSchemeProvider schemeProvider, 
+                             IOptions<PasetoValidationParameters> validationParameters ) {
             mUserManager = userManager;
             mLog = log;
+            mSchemeProvider = schemeProvider;
 
             mJwtSettings = configuration.GetSection( JwtConstants.JwtConfigSettings );
+            mPasetoValidationParameters = validationParameters;
         }
 
         private SigningCredentials GetSigningCredentials() {
@@ -38,7 +50,7 @@ namespace SpaceHelmet.Server.Auth {
 
         private async Task<List<Claim>> BuildUserClaims( DbUser user ) {
             var claims = new List<Claim> {
-                new( ClaimTypes.Name, user.UserName ?? String.Empty ),
+//                new( ClaimTypes.Name, user.UserName ?? String.Empty ),
                 new( ClaimValues.ClaimEntityId, user.Id ),
                 new( ClaimTypes.Email, user.Email ?? String.Empty ),
                 new( ClaimValues.ClaimEmailHash, user.Email?.CalculateMd5Hash() ?? String.Empty )
@@ -50,7 +62,11 @@ namespace SpaceHelmet.Server.Auth {
 
             var dbRoles = await mUserManager.GetRolesAsync( user );
 
-            claims.AddRange( dbRoles.Select( r => new Claim( ClaimTypes.Role, r ) ) );
+            claims.Add(
+                dbRoles.Count > 1
+                    ? new Claim( ClaimTypes.Role, $"[{String.Join( ",", dbRoles )}]" )
+                    : new Claim( ClaimTypes.Role, dbRoles.First() ) );
+//            claims.AddRange( dbRoles.Select( r => new Claim( ClaimTypes.Role, r )));
 
             return claims;
         }
@@ -65,12 +81,14 @@ namespace SpaceHelmet.Server.Auth {
             return tokenOptions;
         }
 
-        public async Task<string> GenerateToken( DbUser user ) {
-            var signingCredentials = GetSigningCredentials(); 
-            var claims = await BuildUserClaims( user );
-            var tokenOptions = GenerateTokenOptions( signingCredentials, claims );
+        public async Task<PasetoToken> GenerateToken( DbUser user ) {
+//            var signingCredentials = GetSigningCredentials(); 
+//            var claims = await BuildUserClaims( user );
+//            var tokenOptions = GenerateTokenOptions( signingCredentials, claims );
 
-            return new JwtSecurityTokenHandler().WriteToken( tokenOptions );
+            return await GeneratePasetoToken( user );
+
+//            return new JwtSecurityTokenHandler().WriteToken( tokenOptions );
         }
 
         public string GenerateRefreshToken() {
@@ -119,6 +137,44 @@ namespace SpaceHelmet.Server.Auth {
             }
 
             return new ClaimsPrincipal( new ClaimsIdentity( new List<Claim>()));
+        }
+
+        private async Task<PasetoToken> GeneratePasetoToken( DbUser forUser ) {
+            var claims = await BuildUserClaims( forUser );
+            //var claims = Enumerable.Empty<Claim>();
+            var identity = new ClaimsIdentity(
+                new GenericIdentity( forUser.Id, "paseto" ),
+                claims.Concat( 
+                new [] {
+                    new Claim( PasetoRegisteredClaimsNames.TokenIdentifier, Guid.NewGuid().ToString( "N" )),
+                }));
+
+            var expirationTime = DateTimeProvider.Instance.CurrentUtcTime.AddMinutes( 
+                Convert.ToDouble( mPasetoValidationParameters.Value.DefaultExpirationTime ));
+
+            var pasetoTokenDescriptor = new PasetoTokenDescriptor() {
+                Audience = mPasetoValidationParameters.Value.Audience,
+                Expires = expirationTime,
+                Issuer = mPasetoValidationParameters.Value.Issuer,
+                Subject = identity,
+                NotBefore = DateTime.Now
+            };
+
+            var publicClaims = await GenerateUserClaims( forUser );
+            var tokenHandler = new PasetoTokenHandler( mSchemeProvider, mPasetoValidationParameters );
+
+            return await tokenHandler.WriteTokenAsync( pasetoTokenDescriptor, publicClaims.Serialize());
+        }
+
+        private async Task<UserClaims> GenerateUserClaims( DbUser forUser ) {
+            var expirationTime = DateTimeProvider.Instance.CurrentUtcTime.AddMinutes( 
+                Convert.ToDouble( mPasetoValidationParameters.Value.DefaultExpirationTime ));
+            var utcTime = new DateTimeOffset( expirationTime.ToUniversalTime());
+            var claims = await BuildUserClaims( forUser );
+
+            return new UserClaims( claims.Concat( new [] {
+                new Claim( ClaimValues.Expiration, utcTime.ToUnixTimeSeconds().ToString())
+            }));
         }
     }
 }

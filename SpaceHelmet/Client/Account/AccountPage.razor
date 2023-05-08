@@ -40,8 +40,9 @@
 
 @inherits Fluxor.Blazor.Web.Components.FluxorComponent
 
-@inject IState<AuthState> AuthState;
-@inject AuthFacade AuthFacade;
+@inject IState<AuthState>   AuthState;
+@inject ITokenParser        TokenParser;
+@inject AuthFacade          AuthFacade;
 
 @code {
     private string  mUserDisplayName = String.Empty;
@@ -50,8 +51,8 @@
     protected override void OnInitialized() {
         base.OnInitialized();
 
-        mUserDisplayName = JwtParser.GetClaimValue( AuthState.Value.UserToken, ClaimTypes.GivenName );
-        mEmail = JwtParser.GetClaimValue( AuthState.Value.UserToken, ClaimTypes.Email );
+        mUserDisplayName = TokenParser.GetClaimValue( AuthState.Value.UserToken, ClaimTypes.GivenName );
+        mEmail = TokenParser.GetClaimValue( AuthState.Value.UserToken, ClaimTypes.Email );
     }
 
     private void OnLogout() {

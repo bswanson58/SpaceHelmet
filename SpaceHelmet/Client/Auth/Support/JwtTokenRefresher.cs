@@ -8,6 +8,7 @@ using SpaceHelmet.Shared.Dto.Auth;
 using SpaceHelmet.Shared.Support;
 using Microsoft.Extensions.Logging;
 using SpaceHelmet.Client.Constants;
+using SpaceHelmet.Shared.Constants;
 
 namespace SpaceHelmet.Client.Auth.Support {
     public interface ITokenRefresher {
@@ -17,19 +18,21 @@ namespace SpaceHelmet.Client.Auth.Support {
 
     public class JwtTokenRefresher : ITokenRefresher {
         private readonly IHttpClientFactory             mClientFactory;
+        private readonly ITokenParser                   mTokenParser;
         private readonly ILocalStorageService           mLocalStorage;
         private readonly ILogger<JwtTokenRefresher>     mLog;
 
         public JwtTokenRefresher( IHttpClientFactory clientFactory, ILocalStorageService localStorage,
-                                  ILogger<JwtTokenRefresher> log ) {
+                                  ITokenParser tokenParser, ILogger<JwtTokenRefresher> log ) {
             mClientFactory = clientFactory;
             mLocalStorage = localStorage;
+            mTokenParser = tokenParser;
             mLog = log;
         }
 
         private async Task<DateTimeOffset> TokenExpirationTime() {
             var token = await mLocalStorage.GetItemAsStringAsync( LocalStorageNames.AuthToken );
-            var expiration = JwtParser.GetClaimValue( token, "exp" );
+            var expiration = mTokenParser.GetClaimValue( token, ClaimValues.Expiration );
 
             if(!String.IsNullOrWhiteSpace( expiration )) {
                 return DateTimeOffset.FromUnixTimeSeconds( Convert.ToInt64( expiration ));

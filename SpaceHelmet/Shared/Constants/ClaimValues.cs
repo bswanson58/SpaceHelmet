@@ -4,6 +4,7 @@
         public static readonly string   ClaimEmailHash  = "emailHash";
         public static readonly string   ClaimEntityId   = "entityId";
         public static readonly string   ClaimName       = "name";
+        public static readonly string   Expiration      = "exp";
 
         public static readonly string   ClaimRoleAdmin  = cAdministrator;
         public static readonly string   ClaimRoleUser   = cUser;
