@@ -28,8 +28,8 @@ namespace PasetoAuth.Common {
             var pasetoToken = new PasetoToken();
             var now = DateTime.Now;
             var expirationDate = descriptor.Expires ?? now.AddSeconds( mValidationParameters.DefaultExpirationTime );
-            var audience = descriptor.Audience ?? mValidationParameters.Audience;
-            var issuer = descriptor.Issuer ?? mValidationParameters.Issuer;
+            var audience = descriptor.Audience ?? mValidationParameters.Audience ?? String.Empty;
+            var issuer = descriptor.Issuer ?? mValidationParameters.Issuer ?? String.Empty;
 
             var pasetoBuilder = new PasetoBuilder()
                 .Use( ProtocolVersion.V4, Purpose.Local )
