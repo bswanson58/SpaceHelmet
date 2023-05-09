@@ -8,9 +8,9 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Security.Principal;
 using System.Text;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 using PasetoAuth.Common;
+using PasetoAuth.Interfaces;
 using PasetoAuth.Options;
 using SpaceHelmet.Shared.Entities;
 using JwtConstants = SpaceHelmet.Shared.Constants.JwtConstants;
@@ -25,17 +25,17 @@ namespace SpaceHelmet.Server.Auth {
 
     public class TokenBuilder : ITokenBuilder {
         private readonly UserManager<DbUser>            mUserManager;
-        private readonly IAuthenticationSchemeProvider  mSchemeProvider;
         private readonly IConfigurationSection          mJwtSettings;
         private readonly IOptions<PasetoValidationParameters>   mPasetoValidationParameters;
+        private readonly IPasetoTokenHandler            mTokenHandler;
         private readonly ILogger<TokenBuilder>          mLog;
 
         public TokenBuilder( UserManager<DbUser> userManager, IConfiguration configuration, ILogger<TokenBuilder> log, 
-                             IAuthenticationSchemeProvider schemeProvider, 
+                             IPasetoTokenHandler tokenHandler, 
                              IOptions<PasetoValidationParameters> validationParameters ) {
             mUserManager = userManager;
             mLog = log;
-            mSchemeProvider = schemeProvider;
+            mTokenHandler = tokenHandler;
 
             mJwtSettings = configuration.GetSection( JwtConstants.JwtConfigSettings );
             mPasetoValidationParameters = validationParameters;
@@ -161,9 +161,8 @@ namespace SpaceHelmet.Server.Auth {
             };
 
             var publicClaims = await GenerateUserClaims( forUser );
-            var tokenHandler = new PasetoTokenHandler( mSchemeProvider, mPasetoValidationParameters );
 
-            return await tokenHandler.WriteTokenAsync( pasetoTokenDescriptor, publicClaims.Serialize());
+            return await mTokenHandler.WriteTokenAsync( pasetoTokenDescriptor, publicClaims.Serialize());
         }
 
         private async Task<UserClaims> GenerateUserClaims( DbUser forUser ) {
