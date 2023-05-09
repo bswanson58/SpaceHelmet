@@ -5,6 +5,7 @@ using PasetoAuth;
 using PasetoAuth.Common;
 using PasetoAuth.Options;
 using SpaceHelmet.Server.Auth;
+using SpaceHelmet.Server.Auth.Tokens;
 using SpaceHelmet.Server.Database;
 using SpaceHelmet.Server.Database.Entities;
 using SpaceHelmet.Server.Database.Providers;

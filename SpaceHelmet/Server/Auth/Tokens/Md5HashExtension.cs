@@ -4,7 +4,7 @@ using System.Text;
 // warning about using md5 version of compute hash
 #pragma warning disable CA1850
 
-namespace SpaceHelmet.Server.Auth {
+namespace SpaceHelmet.Server.Auth.Tokens {
     public static class Md5HashExtension {
         public static string CalculateMd5Hash( this string input ) {
             if( string.IsNullOrWhiteSpace( input )) {

@@ -1,8 +1,8 @@
-﻿using SpaceHelmet.Server.Database.Entities;
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using PasetoAuth.Common;
+using SpaceHelmet.Server.Database.Entities;
 
-namespace SpaceHelmet.Server.Auth {
+namespace SpaceHelmet.Server.Auth.Tokens {
     public class WebToken {
         public string       Token { get; set; }
         public string       RefreshToken { get; set; }

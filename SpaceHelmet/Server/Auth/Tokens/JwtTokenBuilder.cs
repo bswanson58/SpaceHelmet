@@ -1,15 +1,15 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 using SpaceHelmet.Server.Database.Entities;
 using SpaceHelmet.Shared.Constants;
 using SpaceHelmet.Shared.Support;
 using JwtConstants = SpaceHelmet.Shared.Constants.JwtConstants;
 
-namespace SpaceHelmet.Server.Auth {
+namespace SpaceHelmet.Server.Auth.Tokens {
     public class JwtTokenBuilder : ITokenBuilder {
         private readonly UserManager<DbUser>            mUserManager;
         private readonly IConfigurationSection          mJwtSettings;

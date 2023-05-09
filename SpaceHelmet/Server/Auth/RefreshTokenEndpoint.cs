@@ -1,6 +1,7 @@
 ﻿using Ardalis.ApiEndpoints;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using SpaceHelmet.Server.Auth.Tokens;
 using SpaceHelmet.Server.Database.Entities;
 using SpaceHelmet.Shared.Dto.Auth;
 using SpaceHelmet.Shared.Support;

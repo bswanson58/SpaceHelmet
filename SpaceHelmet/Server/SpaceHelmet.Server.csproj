@@ -68,6 +68,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Auth\Tokens\" />
     <Folder Include="Database\Migrations\" />
   </ItemGroup>
 

@@ -10,7 +10,7 @@ using SpaceHelmet.Shared.Constants;
 using SpaceHelmet.Shared.Entities;
 using SpaceHelmet.Shared.Support;
 
-namespace SpaceHelmet.Server.Auth {
+namespace SpaceHelmet.Server.Auth.Tokens {
     public class PasetoTokenBuilder : ITokenBuilder {
         private readonly UserManager<DbUser>                    mUserManager;
         private readonly IOptions<PasetoValidationParameters>   mPasetoValidationParameters;
