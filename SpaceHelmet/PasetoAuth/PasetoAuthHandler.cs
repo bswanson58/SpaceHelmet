@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Net.Http.Headers;
-using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
@@ -38,18 +37,7 @@ namespace PasetoAuth {
             }
 
             try {
-                ClaimsPrincipal claimsPrincipal;
-
-                if( Options.UseRefreshToken == true ) {
-                    if( Options.PasetoRefreshTokenProvider == null ) {
-                        throw new InvalidOperationException( "Paseto Refresh Tokens handler not defined" );
-                    }
-
-                    claimsPrincipal = await Options.PasetoRefreshTokenProvider.ReceiveAsync( Request.HttpContext );
-                }
-                else {
-                    claimsPrincipal = await mPasetoTokenHandler.DecodeTokenAsync( headerValue.Parameter ?? String.Empty );
-                }
+                var claimsPrincipal = await mPasetoTokenHandler.DecodeTokenAsync( headerValue.Parameter ?? String.Empty );
 
                 if(!claimsPrincipal.Claims.Any()) {
                     throw new InvalidGrantType();

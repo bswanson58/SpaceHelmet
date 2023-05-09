@@ -74,6 +74,8 @@ void ConfigureSecurity( IServiceCollection services, ConfigurationManager config
         options.UseRefreshToken = pasetoOptions.UseRefreshToken;
         options.ValidateAudience = pasetoOptions.ValidateAudience;
         options.ValidateIssuer = pasetoOptions.ValidateIssuer;
+        options.UseRefreshToken = true;
+        options.PasetoRefreshTokenProvider = new PasetoRefreshTokenProvider();
     });
 /*
     var jwtSettings = configuration.GetSection( JwtConstants.JwtConfigSettings );
