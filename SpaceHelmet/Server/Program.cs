@@ -43,7 +43,6 @@ void ConfigureServices( IServiceCollection services, ConfigurationManager config
 
     services.AddEntityProviders();
     services.AddScoped<IDbContext, SpaceHelmetDbContext>();
-    services.AddScoped<ITokenBuilder, TokenBuilder>();
     services.AddScoped<IUserService, UserService>();
 
     services.AddHttpClient();
@@ -58,8 +57,9 @@ void ConfigureSecurity( IServiceCollection services, ConfigurationManager config
         .AddEntityFrameworkStores<SpaceHelmetDbContext>()
         .AddDefaultTokenProviders();
 
+    services.AddScoped<ITokenBuilder, PasetoTokenBuilder>();
     var pasetoOptions = configuration
-        .GetSection( nameof( PasetoValidationParameters )).Get<PasetoValidationParameters>() ?? 
+                            .GetSection( nameof( PasetoValidationParameters )).Get<PasetoValidationParameters>() ?? 
                         new PasetoValidationParameters();
 
     services.AddAuthentication( options => {
