@@ -12,19 +12,22 @@ using Paseto.Cryptography.Key;
 using PasetoAuth.Exceptions;
 using PasetoAuth.Interfaces;
 using PasetoAuth.Options;
+using TokenAuthentication.Interfaces;
 
 namespace PasetoAuth.Common {
     public class PasetoTokenHandler : IPasetoTokenHandler {
         private readonly IAuthenticationSchemeProvider  mAuthenticationSchemeProvider;
+        private readonly IRefreshTokenProvider          mRefreshTokenProvider;
         private readonly PasetoValidationParameters     mValidationParameters;
 
-        public PasetoTokenHandler( IAuthenticationSchemeProvider authenticationSchemeProvider,
+        public PasetoTokenHandler( IAuthenticationSchemeProvider authenticationSchemeProvider, IRefreshTokenProvider refreshTokenProvider,
                                    IOptions<PasetoValidationParameters> validationParameters ) {
             mAuthenticationSchemeProvider = authenticationSchemeProvider;
+            mRefreshTokenProvider = refreshTokenProvider;
             mValidationParameters = validationParameters.Value;
         }
 
-        public Task<PasetoToken> WriteTokenAsync( PasetoTokenDescriptor descriptor, string footer = "" ) {
+        public async Task<PasetoToken> WriteTokenAsync( PasetoTokenDescriptor descriptor, string footer = "" ) {
             var pasetoToken = new PasetoToken();
             var now = DateTime.Now;
             var expirationDate = descriptor.Expires ?? now.AddSeconds( mValidationParameters.DefaultExpirationTime );
@@ -52,13 +55,11 @@ namespace PasetoAuth.Common {
             pasetoToken.CreatedAt = now;
             pasetoToken.ExpiresAt = expirationDate;
 
-            if(( mValidationParameters.UseRefreshToken == true ) && 
-               ( mValidationParameters.PasetoRefreshTokenProvider != null )) {
-                pasetoToken.RefreshToken = mValidationParameters.PasetoRefreshTokenProvider
-                    .CreateAsync( descriptor.Subject ).Result;
+            if( mValidationParameters.UseRefreshToken == true ) {
+                pasetoToken.RefreshToken =  await mRefreshTokenProvider.CreateAsync( descriptor.Subject );
             }
 
-            return Task.FromResult( pasetoToken );
+            return pasetoToken;
         }
 
         public Task<PasetoAsymmetricKeyPair> GenerateKeyPairAsync( string secretKey ) {

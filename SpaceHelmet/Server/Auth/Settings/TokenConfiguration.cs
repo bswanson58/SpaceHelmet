@@ -4,6 +4,8 @@ using PasetoAuth.Common;
 using PasetoAuth.Options;
 using SpaceHelmet.Server.Auth.Tokens;
 using SpaceHelmet.Shared.Constants;
+using TokenAuthentication.Interfaces;
+using TokenAuthentication.RefreshTokens;
 
 namespace SpaceHelmet.Server.Auth.Settings {
     public static class TokenConfiguration {
@@ -27,6 +29,8 @@ namespace SpaceHelmet.Server.Auth.Settings {
                         throw new ApplicationException( "Invalid token configuration " );
                 }
             }
+
+            services.AddScoped<IRefreshTokenProvider, RefreshTokenProvider>();
         }
 
         private static void AddPasetoTokens( IServiceCollection services, ConfigurationManager configuration ) {
@@ -48,7 +52,6 @@ namespace SpaceHelmet.Server.Auth.Settings {
                 options.ValidateAudience = pasetoOptions.ValidateAudience;
                 options.ValidateIssuer = pasetoOptions.ValidateIssuer;
                 options.UseRefreshToken = true;
-                options.PasetoRefreshTokenProvider = new PasetoRefreshTokenProvider();
             });
 
             services.AddScoped<ITokenBuilder, PasetoTokenBuilder>();

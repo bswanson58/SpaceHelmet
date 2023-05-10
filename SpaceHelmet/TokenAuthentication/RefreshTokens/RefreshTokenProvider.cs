@@ -2,10 +2,10 @@
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
-using PasetoAuth.Interfaces;
+using TokenAuthentication.Interfaces;
 
-namespace PasetoAuth {
-    public class PasetoRefreshTokenProvider : IPasetoRefreshTokenProvider {
+namespace TokenAuthentication.RefreshTokens {
+    public class RefreshTokenProvider : IRefreshTokenProvider {
         public Task<string> CreateAsync( ClaimsIdentity claimsPrincipal ) {
             var randomNumber = new byte[32];
 
