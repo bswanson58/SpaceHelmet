@@ -85,7 +85,7 @@ namespace SpaceHelmet.Server.Auth.Tokens {
              DateTimeProvider.Instance.CurrentUtcTime.AddMinutes( 
                  Convert.ToDouble( mJwtSettings[JwtConstants.JwtConfigExpiration]));
 
-        private static TokenValidationParameters CreateTokenValidationParameters( IConfigurationSection jwtSettings ) =>
+        public static TokenValidationParameters CreateTokenValidationParameters( IConfigurationSection jwtSettings ) =>
             new TokenValidationParameters {
                 ValidateAudience = false,
                 ValidateIssuer = true,

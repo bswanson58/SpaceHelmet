@@ -1,11 +1,8 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using PasetoAuth;
-using PasetoAuth.Common;
-using PasetoAuth.Options;
 using SpaceHelmet.Server.Auth;
-using SpaceHelmet.Server.Auth.Tokens;
+using SpaceHelmet.Server.Auth.Settings;
 using SpaceHelmet.Server.Database;
 using SpaceHelmet.Server.Database.Entities;
 using SpaceHelmet.Server.Database.Providers;
@@ -40,7 +37,7 @@ void ConfigureServices( IServiceCollection services, ConfigurationManager config
         options.EnableDetailedErrors();
         options.EnableSensitiveDataLogging();
 #endif
-    } );
+    });
 
     services.AddEntityProviders();
     services.AddScoped<IDbContext, SpaceHelmetDbContext>();
@@ -58,42 +55,12 @@ void ConfigureSecurity( IServiceCollection services, ConfigurationManager config
         .AddEntityFrameworkStores<SpaceHelmetDbContext>()
         .AddDefaultTokenProviders();
 
-    services.AddScoped<ITokenBuilder, PasetoTokenBuilder>();
-    var pasetoOptions = configuration
-                            .GetSection( nameof( PasetoValidationParameters )).Get<PasetoValidationParameters>() ?? 
-                        new PasetoValidationParameters();
-
-    services.AddAuthentication( options => {
-        options.DefaultChallengeScheme = PasetoDefaults.Bearer;
-        options.DefaultAuthenticateScheme = PasetoDefaults.Bearer;
-    }).AddPaseto( options => {
-        options.Audience = pasetoOptions.Audience;
-        options.DefaultExpirationTime = pasetoOptions.DefaultExpirationTime;
-        options.Issuer = pasetoOptions.Issuer;
-        options.ClockSkew = pasetoOptions.ClockSkew;
-        options.SecretKey = pasetoOptions.SecretKey;
-        options.UseRefreshToken = pasetoOptions.UseRefreshToken;
-        options.ValidateAudience = pasetoOptions.ValidateAudience;
-        options.ValidateIssuer = pasetoOptions.ValidateIssuer;
-        options.UseRefreshToken = true;
-        options.PasetoRefreshTokenProvider = new PasetoRefreshTokenProvider();
-    });
-/*
-    var jwtSettings = configuration.GetSection( JwtConstants.JwtConfigSettings );
-    
-    services.AddAuthentication( options => {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-    } )
-        .AddJwtBearer( options => {
-            options.TokenValidationParameters = TokenBuilder.CreateTokenValidationParameters( jwtSettings );
-        } );
-*/
     services.AddAuthorization( auth => {
         auth.AddPolicy( ClaimValues.cAdministrator, policy => policy.RequireRole( ClaimValues.cAdministrator ));
         auth.AddPolicy( ClaimValues.cUser, policy => policy.RequireRole( ClaimValues.cUser ));
     });
+
+    services.AddTokenConfiguration( configuration );
 }
 
 void ConfigurePipeline( WebApplication webApp ) {
