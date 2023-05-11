@@ -3,7 +3,7 @@ using System.Security.Claims;
 
 namespace TokenAuthentication.Settings {
     public class PasetoTokenDescriptor {
-        public string ?          Issuer { get; set; }
+        public string ?         Issuer { get; set; }
         public string ?         Audience { get; set; }
         public ClaimsIdentity   Subject { get; set; }
         public DateTime ?       NotBefore { get; set; }

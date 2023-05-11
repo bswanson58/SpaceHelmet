@@ -2,7 +2,10 @@
 
 namespace TokenAuthentication.Settings {
     public class RefreshTokenOptions {
-        public  bool        UseRefreshTokens { get; set; }
-        public  DateTime    RefreshTokenExpiration { get; set; }
+        public  TimeSpan    RefreshTokenExpiration { get; set; }
+
+        public RefreshTokenOptions() {
+            RefreshTokenExpiration = TimeSpan.FromMinutes( 60 );
+        }
     }
 }

@@ -44,7 +44,7 @@ namespace TokenAuthentication.PasetoTokens {
                 .AddFooter( footer )
                 .Expiration( expirationDate );
 
-            if( !descriptor.NotBefore.Equals( null ) ) {
+            if(!descriptor.NotBefore.Equals( null ) ) {
                 pasetoBuilder.AddClaim( RegisteredClaims.NotBefore, descriptor.NotBefore );
             }
 
@@ -54,10 +54,8 @@ namespace TokenAuthentication.PasetoTokens {
 
             pasetoToken.Token = pasetoBuilder.Encode();
             pasetoToken.ExpiresAt = expirationDate;
-
-            if( mTokenOptions.UseRefreshToken == true ) {
-                pasetoToken.RefreshToken =  await mRefreshTokenProvider.CreateAsync( descriptor.Subject );
-            }
+            pasetoToken.RefreshToken =  await mRefreshTokenProvider.CreateAsync( descriptor.Subject );
+            pasetoToken.RefreshExpiresAt = mRefreshTokenProvider.TokenExpiration();
 
             return pasetoToken;
         }

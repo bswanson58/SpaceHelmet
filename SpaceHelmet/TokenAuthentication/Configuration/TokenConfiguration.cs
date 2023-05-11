@@ -34,7 +34,12 @@ namespace TokenAuthentication.Configuration {
                 }
             }
 
-            services.AddScoped<IRefreshTokenProvider, RefreshTokenProvider>();
+            if( tokenOptions.UseRefreshTokens ) {
+                services.AddScoped<IRefreshTokenProvider, RefreshTokenProvider>();
+            }
+            else {
+                services.AddScoped<IRefreshTokenProvider, NullRefreshTokenProvider>();
+            }
         }
 
         private static void AddPasetoTokens( IServiceCollection services, ConfigurationManager configuration ) {
@@ -53,7 +58,6 @@ namespace TokenAuthentication.Configuration {
                 options.Issuer = pasetoOptions.Issuer;
                 options.ClockSkew = pasetoOptions.ClockSkew;
                 options.SecretKey = pasetoOptions.SecretKey;
-                options.UseRefreshToken = pasetoOptions.UseRefreshToken;
                 options.ValidateAudience = pasetoOptions.ValidateAudience;
                 options.ValidateIssuer = pasetoOptions.ValidateIssuer;
             } );

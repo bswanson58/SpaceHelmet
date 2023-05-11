@@ -9,7 +9,6 @@ namespace TokenAuthentication.Settings {
         public TimeSpan         TokenExpiration { get; set; }
         public bool ?           ValidateIssuer { get; set; }
         public bool ?           ValidateAudience { get; set; }
-        public bool ?           UseRefreshToken { get; set; }
 
         public JsonTokenOptions() {
             SecretKey = String.Empty;
@@ -18,7 +17,6 @@ namespace TokenAuthentication.Settings {
             TokenExpiration = TimeSpan.FromMinutes( 5 );
             ValidateIssuer = false;
             ValidateAudience = false;
-            UseRefreshToken = true;
         }
     }
 }

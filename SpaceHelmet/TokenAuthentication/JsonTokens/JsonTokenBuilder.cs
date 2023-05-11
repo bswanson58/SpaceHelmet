@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
@@ -18,12 +17,14 @@ using TokenAuthentication.Support;
 namespace TokenAuthentication.JsonTokens {
     public class JsonTokenBuilder : ITokenBuilder {
         private readonly IClaimBuilder                  mClaimBuilder;
+        private readonly IRefreshTokenProvider          mRefreshTokenProvider;
         private readonly IOptions<JsonTokenOptions>     mJsonTokenOptions;
         private readonly ILogger<JsonTokenBuilder>       mLog;
 
-        public JsonTokenBuilder( IClaimBuilder claimBuilder, IOptions<JsonTokenOptions> jsonTokenOptions, 
-                                ILogger<JsonTokenBuilder> log ) {
+        public JsonTokenBuilder( IClaimBuilder claimBuilder, IRefreshTokenProvider refreshTokenProvider,
+                                 IOptions<JsonTokenOptions> jsonTokenOptions, ILogger<JsonTokenBuilder> log ) {
             mClaimBuilder = claimBuilder;
+            mRefreshTokenProvider = refreshTokenProvider;
             mJsonTokenOptions = jsonTokenOptions;
             mLog = log;
         }
@@ -71,20 +72,11 @@ namespace TokenAuthentication.JsonTokens {
             var tokenOptions = GenerateTokenOptions( signingCredentials, claims );
 
             retValue.Token = new JwtSecurityTokenHandler().WriteToken( tokenOptions );
-            retValue.RefreshToken = mJsonTokenOptions.Value.UseRefreshToken == true ? GenerateRefreshToken() : String.Empty;
+            retValue.RefreshToken = await mRefreshTokenProvider.CreateAsync( new ClaimsIdentity( claims ));
             retValue.ExpiresAt = TokenExpiration();
+            retValue.RefreshExpiresAt = mRefreshTokenProvider.TokenExpiration();
 
             return retValue;
-        }
-
-        private string GenerateRefreshToken() {
-            var randomNumber = new byte[32];
-
-            using( var rng = RandomNumberGenerator.Create()) {
-                rng.GetBytes( randomNumber );
-
-                return Convert.ToBase64String( randomNumber );
-            }
         }
 
         private DateTime TokenExpiration() =>

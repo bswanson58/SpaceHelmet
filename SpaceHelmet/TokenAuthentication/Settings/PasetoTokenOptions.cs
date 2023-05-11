@@ -10,7 +10,6 @@ namespace TokenAuthentication.Settings {
         public TimeSpan         ClockSkew { get; set; }
         public bool ?           ValidateIssuer { get; set; }
         public bool ?           ValidateAudience { get; set; }
-        public bool ?           UseRefreshToken { get; set; }
 
         public PasetoTokenOptions() {
             SecretKey = String.Empty;
@@ -20,7 +19,6 @@ namespace TokenAuthentication.Settings {
             ClockSkew = TimeSpan.FromMinutes( 1 );
             ValidateIssuer = false;
             ValidateAudience = false;
-            UseRefreshToken = true;
         }
     }
 }
