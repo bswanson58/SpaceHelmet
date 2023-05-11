@@ -11,18 +11,18 @@ namespace TokenAuthentication.PasetoTokens {
     public static class PasetoAuthExtensions {
 
         public static AuthenticationBuilder AddPaseto( this AuthenticationBuilder builder,
-            Action<PasetoValidationParameters> configureOptions ) {
+            Action<PasetoTokenOptions> configureOptions ) {
             return AddPaseto( builder, PasetoDefaults.Bearer, configureOptions );
         }
 
         public static AuthenticationBuilder AddPaseto( this AuthenticationBuilder builder,
             string authenticationScheme,
-            Action<PasetoValidationParameters> configureOptions ) {
+            Action<PasetoTokenOptions> configureOptions ) {
             builder.Services.AddScoped<IPasetoTokenHandler, PasetoTokenHandler>();
             builder.Services.Configure( configureOptions );
-            builder.Services.AddSingleton<IPostConfigureOptions<PasetoValidationParameters>, PasetoValidationParametersPostConfigure>();
+            builder.Services.AddSingleton<IPostConfigureOptions<PasetoTokenOptions>, PasetoTokenOptionsPostConfigure>();
 
-            return builder.AddScheme<PasetoValidationParameters, PasetoAuthHandler>( authenticationScheme, configureOptions );
+            return builder.AddScheme<PasetoTokenOptions, PasetoAuthHandler>( authenticationScheme, configureOptions );
         }
     }
 }

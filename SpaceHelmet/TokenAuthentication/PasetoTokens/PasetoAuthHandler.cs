@@ -11,11 +11,11 @@ using TokenAuthentication.Interfaces;
 using TokenAuthentication.Settings;
 
 namespace TokenAuthentication.PasetoTokens {
-    public class PasetoAuthHandler : AuthenticationHandler<PasetoValidationParameters> {
+    public class PasetoAuthHandler : AuthenticationHandler<PasetoTokenOptions> {
         private const string                    cAuthorizationHeaderName = "Authorization";
         private readonly IPasetoTokenHandler    mPasetoTokenHandler;
 
-        public PasetoAuthHandler( IOptionsMonitor<PasetoValidationParameters> options,
+        public PasetoAuthHandler( IOptionsMonitor<PasetoTokenOptions> options,
             ILoggerFactory logger, UrlEncoder encoder, ISystemClock clock,
             IPasetoTokenHandler pasetoTokenHandler )
             : base( options, logger, encoder, clock ) {

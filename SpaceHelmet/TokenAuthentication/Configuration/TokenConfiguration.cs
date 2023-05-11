@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using TokenAuthentication.Constants;
 using TokenAuthentication.Interfaces;
 using TokenAuthentication.JsonTokens;
@@ -37,30 +39,33 @@ namespace TokenAuthentication.Configuration {
 
         private static void AddPasetoTokens( IServiceCollection services, ConfigurationManager configuration ) {
             var pasetoOptions = configuration
-                                    .GetSection( nameof( PasetoValidationParameters ))
-                                    .Get<PasetoValidationParameters>() ??
-                                new PasetoValidationParameters();
+                                    .GetSection( nameof( PasetoTokenOptions ))
+                                    .Get<PasetoTokenOptions>() ??
+                                new PasetoTokenOptions();
 
             services.AddAuthentication( options => {
                 options.DefaultChallengeScheme = PasetoDefaults.Bearer;
                 options.DefaultAuthenticateScheme = PasetoDefaults.Bearer;
+                options.DefaultScheme = PasetoDefaults.Bearer;
             } ).AddPaseto( options => {
                 options.Audience = pasetoOptions.Audience;
-                options.DefaultExpirationTime = pasetoOptions.DefaultExpirationTime;
+                options.TokenExpiration = pasetoOptions.TokenExpiration;
                 options.Issuer = pasetoOptions.Issuer;
                 options.ClockSkew = pasetoOptions.ClockSkew;
                 options.SecretKey = pasetoOptions.SecretKey;
                 options.UseRefreshToken = pasetoOptions.UseRefreshToken;
                 options.ValidateAudience = pasetoOptions.ValidateAudience;
                 options.ValidateIssuer = pasetoOptions.ValidateIssuer;
-                options.UseRefreshToken = true;
             } );
 
             services.AddScoped<ITokenBuilder, PasetoTokenBuilder>();
         }
 
         private static void AddJwtTokens( IServiceCollection services, ConfigurationManager configuration ) {
-            var jwtSettings = configuration.GetSection( JwtConstants.JwtConfigSettings );
+            var jwtOptions = configuration
+                                    .GetSection( nameof( JsonTokenOptions ))
+                                    .Get<JsonTokenOptions>() ??
+                                new JsonTokenOptions();
 
             services.AddAuthentication( options => {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -68,10 +73,21 @@ namespace TokenAuthentication.Configuration {
                 options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             } )
                 .AddJwtBearer( options => {
-                    options.TokenValidationParameters = JwtTokenBuilder.CreateTokenValidationParameters( jwtSettings );
+                    options.TokenValidationParameters =             
+                        new TokenValidationParameters {
+                            ValidateIssuerSigningKey = true,
+                            ValidateLifetime = true,
+                            ValidIssuer = jwtOptions.Issuer,
+                            ValidateIssuer = jwtOptions.ValidateIssuer ?? false,
+                            ValidAudience = jwtOptions.Audience,
+                            ValidateAudience = jwtOptions.ValidateAudience ?? false,
+                            IssuerSigningKey = 
+                                new SymmetricSecurityKey( 
+                                    Encoding.UTF8.GetBytes( jwtOptions.SecretKey )),
+                        };
                 } );
 
-            services.AddScoped<ITokenBuilder, JwtTokenBuilder>();
+            services.AddScoped<ITokenBuilder, JsonTokenBuilder>();
         }
     }
 }

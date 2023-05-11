@@ -6,31 +6,30 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using TokenAuthentication.Constants;
 using TokenAuthentication.Interfaces;
 using TokenAuthentication.Models;
+using TokenAuthentication.Settings;
 using TokenAuthentication.Support;
-using JwtConstants = TokenAuthentication.Constants.JwtConstants;
 
 namespace TokenAuthentication.JsonTokens {
-    public class JwtTokenBuilder : ITokenBuilder {
+    public class JsonTokenBuilder : ITokenBuilder {
         private readonly IClaimBuilder                  mClaimBuilder;
-        private readonly IConfigurationSection          mJwtSettings;
-        private readonly ILogger<JwtTokenBuilder>       mLog;
+        private readonly IOptions<JsonTokenOptions>     mJsonTokenOptions;
+        private readonly ILogger<JsonTokenBuilder>       mLog;
 
-        public JwtTokenBuilder( IClaimBuilder claimBuilder, IConfiguration configuration, 
-                                ILogger<JwtTokenBuilder> log ) {
+        public JsonTokenBuilder( IClaimBuilder claimBuilder, IOptions<JsonTokenOptions> jsonTokenOptions, 
+                                ILogger<JsonTokenBuilder> log ) {
             mClaimBuilder = claimBuilder;
+            mJsonTokenOptions = jsonTokenOptions;
             mLog = log;
-
-            mJwtSettings = configuration.GetSection( JwtConstants.JwtConfigSettings );
         }
 
         private SigningCredentials GetSigningCredentials() {
-            var key = Encoding.UTF8.GetBytes( mJwtSettings[JwtConstants.JwtConfigSecurityKey] ?? String.Empty );
+            var key = Encoding.UTF8.GetBytes( mJsonTokenOptions.Value.SecretKey );
             var secret = new SymmetricSecurityKey( key );
 
             return new SigningCredentials( secret, SecurityAlgorithms.HmacSha256 );
@@ -57,8 +56,8 @@ namespace TokenAuthentication.JsonTokens {
 
         private JwtSecurityToken GenerateTokenOptions( SigningCredentials signingCredentials, List<Claim> claims ) {
             var tokenOptions = new JwtSecurityToken(
-                issuer: mJwtSettings[JwtConstants.JwtConfigIssuer],
-                audience: mJwtSettings[JwtConstants.JwtConfigAudience],
+                issuer: mJsonTokenOptions.Value.Issuer,
+                audience: mJsonTokenOptions.Value.Audience,
                 claims: claims,
                 expires: TokenExpiration(),
                 signingCredentials: signingCredentials);
@@ -72,13 +71,13 @@ namespace TokenAuthentication.JsonTokens {
             var tokenOptions = GenerateTokenOptions( signingCredentials, claims );
 
             retValue.Token = new JwtSecurityTokenHandler().WriteToken( tokenOptions );
-            retValue.RefreshToken = GenerateRefreshToken();
+            retValue.RefreshToken = mJsonTokenOptions.Value.UseRefreshToken == true ? GenerateRefreshToken() : String.Empty;
             retValue.ExpiresAt = TokenExpiration();
 
             return retValue;
         }
 
-        public string GenerateRefreshToken() {
+        private string GenerateRefreshToken() {
             var randomNumber = new byte[32];
 
             using( var rng = RandomNumberGenerator.Create()) {
@@ -89,26 +88,25 @@ namespace TokenAuthentication.JsonTokens {
         }
 
         private DateTime TokenExpiration() =>
-             DateTimeProvider.Instance.CurrentUtcTime.AddMinutes( 
-                 Convert.ToDouble( mJwtSettings[JwtConstants.JwtConfigExpiration]));
+             DateTimeProvider.Instance.CurrentUtcTime + mJsonTokenOptions.Value.TokenExpiration; 
 
-        public static TokenValidationParameters CreateTokenValidationParameters( IConfigurationSection jwtSettings ) =>
+        private TokenValidationParameters CreateTokenValidationParameters() =>
             new TokenValidationParameters {
-                ValidateAudience = false,
-                ValidateIssuer = true,
+                ValidAudience = mJsonTokenOptions.Value.Audience,
+                ValidateAudience = mJsonTokenOptions.Value.ValidateAudience ?? false,
+                ValidIssuer = mJsonTokenOptions.Value.Issuer,
+                ValidateIssuer = mJsonTokenOptions.Value.ValidateIssuer ?? false,
                 ValidateIssuerSigningKey = true,
                 ValidateLifetime = true,
-                ValidIssuer = jwtSettings[JwtConstants.JwtConfigIssuer],
-                ValidAudience = jwtSettings[JwtConstants.JwtConfigAudience],
                 IssuerSigningKey = 
                     new SymmetricSecurityKey( 
-                        Encoding.UTF8.GetBytes( jwtSettings[JwtConstants.JwtConfigSecurityKey] ?? String.Empty )),
+                        Encoding.UTF8.GetBytes( mJsonTokenOptions.Value.SecretKey )),
             };
 
         public ClaimsPrincipal GetPrincipalFromExpiredToken( string token ) {
             try {
                 var tokenHandler = new JwtSecurityTokenHandler();
-                var tokenParameters = CreateTokenValidationParameters( mJwtSettings );
+                var tokenParameters = CreateTokenValidationParameters();
                 var principal = tokenHandler.ValidateToken( token, tokenParameters, out var securityToken );
                 var jwtSecurityToken = securityToken as JwtSecurityToken;
 

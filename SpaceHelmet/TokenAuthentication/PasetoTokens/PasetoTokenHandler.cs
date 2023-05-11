@@ -19,25 +19,25 @@ namespace TokenAuthentication.PasetoTokens {
     public class PasetoTokenHandler : IPasetoTokenHandler {
         private readonly IAuthenticationSchemeProvider  mAuthenticationSchemeProvider;
         private readonly IRefreshTokenProvider          mRefreshTokenProvider;
-        private readonly PasetoValidationParameters     mValidationParameters;
+        private readonly PasetoTokenOptions             mTokenOptions;
 
         public PasetoTokenHandler( IAuthenticationSchemeProvider authenticationSchemeProvider, IRefreshTokenProvider refreshTokenProvider,
-                                   IOptions<PasetoValidationParameters> validationParameters ) {
+                                   IOptions<PasetoTokenOptions> validationParameters ) {
             mAuthenticationSchemeProvider = authenticationSchemeProvider;
             mRefreshTokenProvider = refreshTokenProvider;
-            mValidationParameters = validationParameters.Value;
+            mTokenOptions = validationParameters.Value;
         }
 
         public async Task<WebToken> WriteTokenAsync( PasetoTokenDescriptor descriptor, string footer = "" ) {
             var pasetoToken = new WebToken();
             var now = DateTime.Now;
-            var expirationDate = descriptor.Expires ?? now.AddSeconds( mValidationParameters.DefaultExpirationTime );
-            var audience = descriptor.Audience ?? mValidationParameters.Audience ?? String.Empty;
-            var issuer = descriptor.Issuer ?? mValidationParameters.Issuer ?? String.Empty;
+            var expirationDate = descriptor.Expires ?? now + mTokenOptions.TokenExpiration;
+            var audience = descriptor.Audience ?? mTokenOptions.Audience ?? String.Empty;
+            var issuer = descriptor.Issuer ?? mTokenOptions.Issuer ?? String.Empty;
 
             var pasetoBuilder = new PasetoBuilder()
                 .Use( ProtocolVersion.V4, Purpose.Local )
-                .WithKey( Encoding.UTF8.GetBytes( mValidationParameters.SecretKey ), Encryption.SymmetricKey )
+                .WithKey( Encoding.UTF8.GetBytes( mTokenOptions.SecretKey ), Encryption.SymmetricKey )
                 .Audience( audience )
                 .Issuer( issuer )
                 .IssuedAt( now )
@@ -55,7 +55,7 @@ namespace TokenAuthentication.PasetoTokens {
             pasetoToken.Token = pasetoBuilder.Encode();
             pasetoToken.ExpiresAt = expirationDate;
 
-            if( mValidationParameters.UseRefreshToken == true ) {
+            if( mTokenOptions.UseRefreshToken == true ) {
                 pasetoToken.RefreshToken =  await mRefreshTokenProvider.CreateAsync( descriptor.Subject );
             }
 
@@ -80,7 +80,7 @@ namespace TokenAuthentication.PasetoTokens {
             };
             var decodedToken = new PasetoBuilder()
                 .Use( ProtocolVersion.V4, Purpose.Local )
-                .WithKey( Encoding.UTF8.GetBytes( mValidationParameters.SecretKey ), Encryption.SymmetricKey )
+                .WithKey( Encoding.UTF8.GetBytes( mTokenOptions.SecretKey ), Encryption.SymmetricKey )
                 .Decode( token, valParams );
 
             if( decodedToken.IsValid ) {
