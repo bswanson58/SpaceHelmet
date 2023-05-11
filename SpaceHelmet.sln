@@ -15,9 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpaceHelmet.Client", "Space
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpaceHelmet.Shared", "SpaceHelmet\Shared\SpaceHelmet.Shared.csproj", "{156D04B7-2BA8-4599-9308-5443568724ED}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PasetoAuth", "SpaceHelmet\PasetoAuth\PasetoAuth.csproj", "{DE4FE957-7B1A-4907-9812-31AB2F0C54AC}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TokenAuthentication", "SpaceHelmet\TokenAuthentication\TokenAuthentication.csproj", "{4A16250F-83E4-4F6B-868F-565EC6F24767}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TokenAuthentication", "SpaceHelmet\TokenAuthentication\TokenAuthentication.csproj", "{4A16250F-83E4-4F6B-868F-565EC6F24767}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,10 +35,6 @@ Global
 		{156D04B7-2BA8-4599-9308-5443568724ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{156D04B7-2BA8-4599-9308-5443568724ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{156D04B7-2BA8-4599-9308-5443568724ED}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DE4FE957-7B1A-4907-9812-31AB2F0C54AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DE4FE957-7B1A-4907-9812-31AB2F0C54AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DE4FE957-7B1A-4907-9812-31AB2F0C54AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DE4FE957-7B1A-4907-9812-31AB2F0C54AC}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4A16250F-83E4-4F6B-868F-565EC6F24767}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4A16250F-83E4-4F6B-868F-565EC6F24767}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4A16250F-83E4-4F6B-868F-565EC6F24767}.Release|Any CPU.ActiveCfg = Release|Any CPU

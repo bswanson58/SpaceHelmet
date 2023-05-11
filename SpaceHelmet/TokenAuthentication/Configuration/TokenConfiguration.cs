@@ -1,13 +1,15 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using PasetoAuth;
-using PasetoAuth.Common;
-using PasetoAuth.Options;
-using SpaceHelmet.Server.Auth.Tokens;
-using SpaceHelmet.Shared.Constants;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Configuration;
+using TokenAuthentication.Constants;
 using TokenAuthentication.Interfaces;
+using TokenAuthentication.JsonTokens;
+using TokenAuthentication.PasetoTokens;
 using TokenAuthentication.RefreshTokens;
+using TokenAuthentication.Settings;
 
-namespace SpaceHelmet.Server.Auth.Settings {
+namespace TokenAuthentication.Configuration {
     public static class TokenConfiguration {
         public static void AddTokenConfiguration( this IServiceCollection services, ConfigurationManager configuration ) {
             var tokenOptions = configuration
@@ -16,7 +18,7 @@ namespace SpaceHelmet.Server.Auth.Settings {
                                new TokenOptions();
 
             if( tokenOptions.UseTokens ) {
-                switch ( tokenOptions.TokenStyle.ToLower()) {
+                switch( tokenOptions.TokenStyle.ToLower() ) {
                     case TokenStyles.JsonWebTokens:
                         AddJwtTokens( services, configuration );
                         break;
@@ -36,13 +38,13 @@ namespace SpaceHelmet.Server.Auth.Settings {
         private static void AddPasetoTokens( IServiceCollection services, ConfigurationManager configuration ) {
             var pasetoOptions = configuration
                                     .GetSection( nameof( PasetoValidationParameters ))
-                                    .Get<PasetoValidationParameters>() ?? 
+                                    .Get<PasetoValidationParameters>() ??
                                 new PasetoValidationParameters();
 
             services.AddAuthentication( options => {
                 options.DefaultChallengeScheme = PasetoDefaults.Bearer;
                 options.DefaultAuthenticateScheme = PasetoDefaults.Bearer;
-            }).AddPaseto( options => {
+            } ).AddPaseto( options => {
                 options.Audience = pasetoOptions.Audience;
                 options.DefaultExpirationTime = pasetoOptions.DefaultExpirationTime;
                 options.Issuer = pasetoOptions.Issuer;
@@ -52,19 +54,19 @@ namespace SpaceHelmet.Server.Auth.Settings {
                 options.ValidateAudience = pasetoOptions.ValidateAudience;
                 options.ValidateIssuer = pasetoOptions.ValidateIssuer;
                 options.UseRefreshToken = true;
-            });
+            } );
 
             services.AddScoped<ITokenBuilder, PasetoTokenBuilder>();
         }
 
         private static void AddJwtTokens( IServiceCollection services, ConfigurationManager configuration ) {
             var jwtSettings = configuration.GetSection( JwtConstants.JwtConfigSettings );
-    
+
             services.AddAuthentication( options => {
-                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                } )
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            } )
                 .AddJwtBearer( options => {
                     options.TokenValidationParameters = JwtTokenBuilder.CreateTokenValidationParameters( jwtSettings );
                 } );

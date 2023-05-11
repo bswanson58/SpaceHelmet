@@ -1,22 +1,29 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using Microsoft.AspNetCore.Identity;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using SpaceHelmet.Server.Database.Entities;
-using SpaceHelmet.Shared.Constants;
-using SpaceHelmet.Shared.Support;
-using JwtConstants = SpaceHelmet.Shared.Constants.JwtConstants;
+using TokenAuthentication.Constants;
+using TokenAuthentication.Interfaces;
+using TokenAuthentication.Models;
+using TokenAuthentication.Support;
+using JwtConstants = TokenAuthentication.Constants.JwtConstants;
 
-namespace SpaceHelmet.Server.Auth.Tokens {
+namespace TokenAuthentication.JsonTokens {
     public class JwtTokenBuilder : ITokenBuilder {
-        private readonly UserManager<DbUser>            mUserManager;
+        private readonly IClaimBuilder                  mClaimBuilder;
         private readonly IConfigurationSection          mJwtSettings;
         private readonly ILogger<JwtTokenBuilder>       mLog;
 
-        public JwtTokenBuilder( UserManager<DbUser> userManager, IConfiguration configuration, ILogger<JwtTokenBuilder> log ) {
-            mUserManager = userManager;
+        public JwtTokenBuilder( IClaimBuilder claimBuilder, IConfiguration configuration, 
+                                ILogger<JwtTokenBuilder> log ) {
+            mClaimBuilder = claimBuilder;
             mLog = log;
 
             mJwtSettings = configuration.GetSection( JwtConstants.JwtConfigSettings );
@@ -29,7 +36,7 @@ namespace SpaceHelmet.Server.Auth.Tokens {
             return new SigningCredentials( secret, SecurityAlgorithms.HmacSha256 );
         }
 
-        private async Task<List<Claim>> BuildUserClaims( DbUser user ) {
+        private async Task<List<Claim>> BuildUserClaims( TokenUser user ) {
             var claims = new List<Claim> {
                 new( ClaimTypes.Name, user.UserName ?? String.Empty ),
                 new( ClaimValues.ClaimEntityId, user.Id ),
@@ -37,11 +44,11 @@ namespace SpaceHelmet.Server.Auth.Tokens {
                 new( ClaimValues.ClaimEmailHash, user.Email?.CalculateMd5Hash() ?? String.Empty )
             };
 
-            var dbClaims = await mUserManager.GetClaimsAsync( user );
+            var dbClaims = await mClaimBuilder.GetClaimsAsync( user );
 
             claims.AddRange( dbClaims );
 
-            var dbRoles = await mUserManager.GetRolesAsync( user );
+            var dbRoles = await mClaimBuilder.GetRolesAsync( user );
 
             claims.AddRange( dbRoles.Select( r => new Claim( ClaimTypes.Role, r )));
 
@@ -58,7 +65,7 @@ namespace SpaceHelmet.Server.Auth.Tokens {
             return tokenOptions;
         }
 
-        public async Task<WebToken> GenerateToken( DbUser user ) {
+        public async Task<WebToken> GenerateToken( TokenUser user ) {
             var retValue = new WebToken();
             var signingCredentials = GetSigningCredentials(); 
             var claims = await BuildUserClaims( user );

@@ -24,8 +24,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Client\SpaceHelmet.Client.csproj" />
-    <ProjectReference Include="..\PasetoAuth\PasetoAuth.csproj" />
     <ProjectReference Include="..\Shared\SpaceHelmet.Shared.csproj" />
+    <ProjectReference Include="..\TokenAuthentication\TokenAuthentication.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -68,7 +68,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Auth\Tokens\" />
     <Folder Include="Database\Migrations\" />
   </ItemGroup>
 

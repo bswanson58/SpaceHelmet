@@ -2,13 +2,14 @@ using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using SpaceHelmet.Server.Auth;
-using SpaceHelmet.Server.Auth.Settings;
 using SpaceHelmet.Server.Database;
 using SpaceHelmet.Server.Database.Entities;
 using SpaceHelmet.Server.Database.Providers;
 using SpaceHelmet.Server.Models;
 using SpaceHelmet.Shared.Constants;
 using SpaceHelmet.Shared.Dto.Auth;
+using TokenAuthentication.Configuration;
+using TokenAuthentication.Interfaces;
 
 var builder = WebApplication.CreateBuilder( args );
 
@@ -61,6 +62,7 @@ void ConfigureSecurity( IServiceCollection services, ConfigurationManager config
     });
 
     services.AddTokenConfiguration( configuration );
+    services.AddScoped<IClaimBuilder, ClaimBuilder>();
 }
 
 void ConfigurePipeline( WebApplication webApp ) {

@@ -1,4 +1,6 @@
-﻿namespace SpaceHelmet.Server.Auth.Settings {
+﻿using System;
+
+namespace TokenAuthentication.Settings {
     public static class TokenStyles {
         public const string   JsonWebTokens = "jwt";
         public const string   PasetoTokens = "paseto";
