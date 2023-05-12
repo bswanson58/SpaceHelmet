@@ -38,19 +38,19 @@ namespace TokenAuthentication.JsonTokens {
 
         private async Task<List<Claim>> BuildUserClaims( TokenUser user ) {
             var claims = new List<Claim> {
-                new( ClaimTypes.Name, user.UserName ?? String.Empty ),
-                new( ClaimValues.ClaimEntityId, user.Id ),
-                new( ClaimTypes.Email, user.Email ?? String.Empty ),
-                new( ClaimValues.ClaimEmailHash, user.Email?.CalculateMd5Hash() ?? String.Empty )
+                new( ClaimValues.RefreshName, user.UserName ?? String.Empty ),
             };
 
             var dbClaims = await mClaimBuilder.GetClaimsAsync( user );
 
             claims.AddRange( dbClaims );
 
-            var dbRoles = await mClaimBuilder.GetRolesAsync( user );
+            var dbRoles = ( await mClaimBuilder.GetRolesAsync( user )).ToList();
 
-            claims.AddRange( dbRoles.Select( r => new Claim( ClaimTypes.Role, r )));
+            claims.Add(
+                dbRoles.Count > 1
+                    ? new Claim( ClaimTypes.Role, $"[{string.Join( ",", dbRoles )}]" )
+                    : new Claim( ClaimTypes.Role, dbRoles.First()));
 
             return claims;
         }

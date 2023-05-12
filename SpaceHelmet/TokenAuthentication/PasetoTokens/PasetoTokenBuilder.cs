@@ -58,17 +58,15 @@ namespace TokenAuthentication.PasetoTokens {
 
             return new UserClaims( claims.Concat( new[] {
                 new Claim( ClaimValues.Expiration, utcTime.ToUnixTimeSeconds().ToString())
-            } ) );
+            }));
         }
 
         private async Task<List<Claim>> BuildUserClaims( TokenUser user ) {
             var claims = new List<Claim> {
-                new( ClaimValues.ClaimEntityId, user.Id ),
-                new( ClaimTypes.Email, user.Email ?? string.Empty ),
-                new( ClaimValues.ClaimEmailHash, user.Email?.CalculateMd5Hash() ?? string.Empty )
+                new( ClaimValues.RefreshName, user.UserName ?? String.Empty ),
             };
 
-            claims.AddRange( await mClaimBuilder.GetClaimsAsync( user ) );
+            claims.AddRange( await mClaimBuilder.GetClaimsAsync( user ));
 
             var dbRoles = ( await mClaimBuilder.GetRolesAsync( user )).ToList();
 
@@ -79,6 +77,7 @@ namespace TokenAuthentication.PasetoTokens {
 
             return claims;
         }
+
         private DateTime TokenExpiration() =>
             DateTimeProvider.Instance.CurrentUtcTime + mTokenOptions.Value.TokenExpiration; 
     }

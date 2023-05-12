@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SpaceHelmet.Server.Database.Entities;
+using SpaceHelmet.Shared.Constants;
 using SpaceHelmet.Shared.Dto.Auth;
 using SpaceHelmet.Shared.Support;
 using TokenAuthentication.Interfaces;
@@ -26,10 +27,11 @@ namespace SpaceHelmet.Server.Auth {
             CancellationToken cancellationToken = new () ) {
 
             var principal = await mTokenBuilder.GetPrincipalFromExpiredToken( request.Token );
+            var refreshName = principal.Claims.FirstOrDefault( c => c.Type.Equals( ClaimValues.RefreshName ));
             var user = default( DbUser );
 
-            if(!String.IsNullOrWhiteSpace( principal.Identity?.Name )) {
-                user = await mUserManager.FindByEmailAsync( principal.Identity.Name );
+            if(!String.IsNullOrWhiteSpace( refreshName?.Value )) {
+                user = await mUserManager.FindByEmailAsync( refreshName.Value );
             }
 
             if(( user == null ) ||
