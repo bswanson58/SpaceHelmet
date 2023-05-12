@@ -13,6 +13,14 @@ namespace SpaceHelmet.Client.Ui.Store {
             mDispatcher = dispatcher;
         }
 
+        public void ApiCallStarted( string message ) {
+            mDispatcher.Dispatch( new ApiCallStarted( message ));
+        }
+
+        public void ApiCallCompleted() {
+            mDispatcher.Dispatch( new ApiCallCompleted());
+        }
+
         public void ApiCallFailure( string message ) {
             mDispatcher.Dispatch( new ApiCallFailure( message ) );
         }

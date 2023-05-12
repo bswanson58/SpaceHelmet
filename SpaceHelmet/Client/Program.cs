@@ -11,6 +11,7 @@ using MudBlazor.Services;
 using SpaceHelmet.Client;
 using SpaceHelmet.Client.Auth.Store;
 using SpaceHelmet.Client.Auth.Support;
+using SpaceHelmet.Client.ClientApi;
 using SpaceHelmet.Client.Constants;
 using SpaceHelmet.Client.Gravatar;
 using SpaceHelmet.Client.Support;
@@ -62,6 +63,8 @@ void ConfigureServices( IServiceCollection services ) {
     services.AddScoped<AnnouncementHandler>();
 
     services.AddScoped<IGravatarClient, GravatarClient>();
+
+    services.AddScoped<IDataRequester, DataRequester>();
 
     services.AddFluxor( options => options.ScanAssemblies( typeof( App ).Assembly ));
 

@@ -74,6 +74,8 @@ void ConfigurePipeline( WebApplication webApp ) {
     webApp.UseBlazorFrameworkFiles();
     webApp.UseStaticFiles();
 
+    webApp.UseHttpLogging();
+
     webApp.UseRouting();
 
     webApp.MapControllers();
