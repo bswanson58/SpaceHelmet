@@ -4,7 +4,7 @@ using TokenAuthentication.Models;
 
 namespace TokenAuthentication.Interfaces {
     public interface ITokenBuilder {
-        Task<WebToken>      GenerateToken( TokenUser user );
-        ClaimsPrincipal     GetPrincipalFromExpiredToken( string token );
+        Task<WebToken>          GenerateToken( TokenUser user );
+        Task<ClaimsPrincipal>   GetPrincipalFromExpiredToken( string token );
     }
 }

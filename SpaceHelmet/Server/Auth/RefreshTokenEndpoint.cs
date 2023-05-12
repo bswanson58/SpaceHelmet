@@ -25,7 +25,7 @@ namespace SpaceHelmet.Server.Auth {
             [FromBody] RefreshTokenRequest request,
             CancellationToken cancellationToken = new () ) {
 
-            var principal = mTokenBuilder.GetPrincipalFromExpiredToken( request.Token );
+            var principal = await mTokenBuilder.GetPrincipalFromExpiredToken( request.Token );
             var user = default( DbUser );
 
             if(!String.IsNullOrWhiteSpace( principal.Identity?.Name )) {

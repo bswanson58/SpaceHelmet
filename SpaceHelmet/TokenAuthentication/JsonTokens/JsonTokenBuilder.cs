@@ -95,7 +95,7 @@ namespace TokenAuthentication.JsonTokens {
                         Encoding.UTF8.GetBytes( mJsonTokenOptions.Value.SecretKey )),
             };
 
-        public ClaimsPrincipal GetPrincipalFromExpiredToken( string token ) {
+        public Task<ClaimsPrincipal> GetPrincipalFromExpiredToken( string token ) {
             try {
                 var tokenHandler = new JwtSecurityTokenHandler();
                 var tokenParameters = CreateTokenValidationParameters();
@@ -107,13 +107,13 @@ namespace TokenAuthentication.JsonTokens {
                     throw new SecurityTokenException( "Invalid token" );
                 }
 
-                return principal;
+                return Task.FromResult( principal );
             }
             catch( Exception ex ) {
                 mLog.LogError( ex, "GetPrincipalFromExpiredToken" );
             }
 
-            return new ClaimsPrincipal( new ClaimsIdentity( new List<Claim>()));
+            return Task.FromResult( new ClaimsPrincipal( new ClaimsIdentity( new List<Claim>())));
         }
     }
 }

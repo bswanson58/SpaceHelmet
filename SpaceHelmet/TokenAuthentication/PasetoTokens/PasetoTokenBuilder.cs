@@ -49,9 +49,8 @@ namespace TokenAuthentication.PasetoTokens {
             return await mTokenHandler.WriteTokenAsync( pasetoTokenDescriptor, publicClaims.Serialize() );
         }
 
-        public ClaimsPrincipal GetPrincipalFromExpiredToken( string token ) {
-            throw new NotImplementedException();
-        }
+        public async Task<ClaimsPrincipal> GetPrincipalFromExpiredToken( string token ) =>
+            await mTokenHandler.DecodeTokenAsync( token );
 
         private async Task<UserClaims> GenerateUserClaims( TokenUser forUser ) {
             var utcTime = new DateTimeOffset( TokenExpiration().ToUniversalTime());
