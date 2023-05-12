@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using TokenAuthentication.Interfaces;
 using TokenAuthentication.Settings;
-using TokenAuthentication.Support;
+using TokenClientSupport.Support;
 
 namespace TokenAuthentication.RefreshTokens {
     public class RefreshTokenProvider : IRefreshTokenProvider {

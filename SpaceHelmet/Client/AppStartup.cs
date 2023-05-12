@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Components;
 using SpaceHelmet.Client.Auth.Store;
 using SpaceHelmet.Client.Auth.Support;
 using SpaceHelmet.Client.ClientApi;
-using SpaceHelmet.Client.Constants;
 using SpaceHelmet.Client.Shared;
 using SpaceHelmet.Client.Support;
+using TokenClientSupport.Constants;
 
 namespace SpaceHelmet.Client {
     public interface IAppStartup : IDisposable {
@@ -36,8 +36,8 @@ namespace SpaceHelmet.Client {
         }
 
         public async Task OnStartup() {
-            var token = await mLocalStorage.GetItemAsStringAsync( LocalStorageNames.AuthToken );
-            var refresh = await mLocalStorage.GetItemAsStringAsync( LocalStorageNames.RefreshToken );
+            var token = await mLocalStorage.GetItemAsStringAsync( TokenStorageNames.AuthToken );
+            var refresh = await mLocalStorage.GetItemAsStringAsync( TokenStorageNames.RefreshToken );
 
             if( mAuthInformation.IsTokenValid( token )) {
                 mAuthFacade.SetAuthenticationToken( token, refresh );

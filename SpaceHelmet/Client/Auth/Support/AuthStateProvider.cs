@@ -5,8 +5,9 @@ using Blazored.LocalStorage;
 using SpaceHelmet.Shared.Constants;
 using SpaceHelmet.Shared.Support;
 using Microsoft.AspNetCore.Components.Authorization;
-using SpaceHelmet.Client.Constants;
+using TokenClientSupport.Constants;
 using TokenClientSupport.Interfaces;
+using ClaimValues = SpaceHelmet.Shared.Constants.ClaimValues;
 
 namespace SpaceHelmet.Client.Auth.Support {
     public class AuthStateProvider : AuthenticationStateProvider {
@@ -28,7 +29,7 @@ namespace SpaceHelmet.Client.Auth.Support {
         }
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync() {
-            var token = await mLocalStorage.GetItemAsStringAsync( LocalStorageNames.AuthToken );
+            var token = await mLocalStorage.GetItemAsStringAsync( TokenStorageNames.AuthToken );
             var expiration = mTokenParser.GetClaimValue( token, ClaimValues.Expiration );
 
             if(!String.IsNullOrWhiteSpace( expiration )) {

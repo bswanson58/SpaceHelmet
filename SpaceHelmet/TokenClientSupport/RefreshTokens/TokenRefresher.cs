@@ -1,30 +1,29 @@
-﻿using System;
-using System.Net;
+﻿using Microsoft.Extensions.Logging;
 using System.Net.Http;
-using System.Net.Http.Json;
+using System.Net;
 using System.Threading.Tasks;
+using System;
+using System.Net.Http.Json;
 using Blazored.LocalStorage;
-using SpaceHelmet.Shared.Dto.Auth;
-using SpaceHelmet.Shared.Support;
-using Microsoft.Extensions.Logging;
-using SpaceHelmet.Client.Constants;
-using SpaceHelmet.Shared.Constants;
+using TokenClientSupport.Constants;
+using TokenClientSupport.Dto;
 using TokenClientSupport.Interfaces;
+using TokenClientSupport.Support;
 
-namespace SpaceHelmet.Client.Auth.Support {
+namespace TokenClientSupport.RefreshTokens {
     public interface ITokenRefresher {
         Task<bool>                  TokenRefreshRequired( int withinMinutes );
         Task<HttpResponseMessage>   RefreshToken();
     }
 
-    public class JwtTokenRefresher : ITokenRefresher {
-        private readonly IHttpClientFactory             mClientFactory;
-        private readonly ITokenParser                   mTokenParser;
-        private readonly ILocalStorageService           mLocalStorage;
-        private readonly ILogger<JwtTokenRefresher>     mLog;
+    public class TokenRefresher : ITokenRefresher {
+        private readonly IHttpClientFactory         mClientFactory;
+        private readonly ITokenParser               mTokenParser;
+        private readonly ILocalStorageService       mLocalStorage;
+        private readonly ILogger<TokenRefresher>    mLog;
 
-        public JwtTokenRefresher( IHttpClientFactory clientFactory, ILocalStorageService localStorage,
-                                  ITokenParser tokenParser, ILogger<JwtTokenRefresher> log ) {
+        public TokenRefresher( IHttpClientFactory clientFactory, ILocalStorageService localStorage,
+                               ITokenParser tokenParser, ILogger<TokenRefresher> log ) {
             mClientFactory = clientFactory;
             mLocalStorage = localStorage;
             mTokenParser = tokenParser;
@@ -32,7 +31,7 @@ namespace SpaceHelmet.Client.Auth.Support {
         }
 
         private async Task<DateTimeOffset> TokenExpirationTime() {
-            var token = await mLocalStorage.GetItemAsStringAsync( LocalStorageNames.AuthToken );
+            var token = await mLocalStorage.GetItemAsStringAsync( TokenStorageNames.AuthToken );
             var expiration = mTokenParser.GetClaimValue( token, ClaimValues.Expiration );
 
             if(!String.IsNullOrWhiteSpace( expiration )) {
@@ -51,8 +50,8 @@ namespace SpaceHelmet.Client.Auth.Support {
 
         public async Task<HttpResponseMessage> RefreshToken() {
             try {
-                var authToken = await mLocalStorage.GetItemAsStringAsync( LocalStorageNames.AuthToken );
-                var refreshToken = await mLocalStorage.GetItemAsStringAsync( LocalStorageNames.RefreshToken );
+                var authToken = await mLocalStorage.GetItemAsStringAsync( TokenStorageNames.AuthToken );
+                var refreshToken = await mLocalStorage.GetItemAsStringAsync( TokenStorageNames.RefreshToken );
 
                 if((!String.IsNullOrWhiteSpace( authToken )) &&
                    (!String.IsNullOrWhiteSpace( refreshToken ))) {
@@ -61,15 +60,15 @@ namespace SpaceHelmet.Client.Auth.Support {
                         RefreshToken = refreshToken
                     };
 
-                    using var httpClient = mClientFactory.CreateClient( HttpClientNames.Anonymous );
+                    using var httpClient = mClientFactory.CreateClient( TokenClientNames.RefreshClient );
                     var postResponse = await httpClient.PostAsJsonAsync( RefreshTokenRequest.Route, request );
 
                     if( postResponse.IsSuccessStatusCode ) {
                         var response = await postResponse.Content.ReadFromJsonAsync<RefreshTokenResponse>();
 
                         if( response?.Succeeded == true ) {
-                            await mLocalStorage.SetItemAsStringAsync( LocalStorageNames.AuthToken, response.Token );
-                            await mLocalStorage.SetItemAsStringAsync( LocalStorageNames.RefreshToken, response.RefreshToken );
+                            await mLocalStorage.SetItemAsStringAsync( TokenStorageNames.AuthToken, response.Token );
+                            await mLocalStorage.SetItemAsStringAsync( TokenStorageNames.RefreshToken, response.RefreshToken );
                         }
                     }
 
@@ -77,7 +76,7 @@ namespace SpaceHelmet.Client.Auth.Support {
                 }
             }
             catch( Exception ex ) {
-                mLog.LogError( ex, "Attempting to refresh JWT token" );
+                mLog.LogError( ex, "Attempting to refresh the authentication token" );
             }
 
             return new HttpResponseMessage( HttpStatusCode.Unauthorized );

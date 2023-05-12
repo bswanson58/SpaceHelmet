@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.AspNetCore.Identity;
-using TokenAuthentication.Support;
+using TokenClientSupport.Support;
 
 namespace TokenAuthentication.Models {
     public class TokenUser : IdentityUser {

@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using TokenAuthentication.Constants;
 using TokenAuthentication.Interfaces;
-using TokenAuthentication.JsonTokens;
 using TokenAuthentication.Models;
 using TokenAuthentication.Settings;
-using TokenAuthentication.Support;
+using TokenClientSupport.Constants;
+using TokenClientSupport.Support;
 
 namespace TokenAuthentication.PasetoTokens {
     public class PasetoTokenBuilder : ITokenBuilder {

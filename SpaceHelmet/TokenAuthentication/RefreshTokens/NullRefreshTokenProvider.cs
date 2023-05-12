@@ -2,7 +2,7 @@
 using System.Security.Claims;
 using System.Threading.Tasks;
 using TokenAuthentication.Interfaces;
-using TokenAuthentication.Support;
+using TokenClientSupport.Support;
 
 namespace TokenAuthentication.RefreshTokens {
     internal class NullRefreshTokenProvider : IRefreshTokenProvider {

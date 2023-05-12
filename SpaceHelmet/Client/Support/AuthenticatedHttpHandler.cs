@@ -11,6 +11,7 @@ using MudBlazor;
 using SpaceHelmet.Client.Auth.Store;
 using SpaceHelmet.Client.Auth.Support;
 using SpaceHelmet.Client.Constants;
+using TokenClientSupport.Constants;
 
 namespace SpaceHelmet.Client.Support {
     public interface IAuthenticatedHttpHandler : IBaseHttpHandler { }
@@ -120,8 +121,8 @@ namespace SpaceHelmet.Client.Support {
             IEnumerable<string> ? authValue = default;
             IEnumerable<string> ? refreshValue = default;
 
-            response.RequestMessage?.Headers.TryGetValues( LocalStorageNames.AuthToken, out authValue );
-            response.RequestMessage?.Headers.TryGetValues( LocalStorageNames.RefreshToken, out refreshValue );
+            response.RequestMessage?.Headers.TryGetValues( TokenStorageNames.AuthToken, out authValue );
+            response.RequestMessage?.Headers.TryGetValues( TokenStorageNames.RefreshToken, out refreshValue );
 
             if(( authValue != null ) &&
                ( refreshValue != null )) {

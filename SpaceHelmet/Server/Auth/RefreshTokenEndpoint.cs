@@ -3,12 +3,12 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SpaceHelmet.Server.Database.Entities;
 using SpaceHelmet.Shared.Constants;
-using SpaceHelmet.Shared.Dto.Auth;
 using SpaceHelmet.Shared.Support;
 using TokenAuthentication.Interfaces;
+using TokenClientSupport.Dto;
 
 namespace SpaceHelmet.Server.Auth {
-    [Route( RefreshTokenRequest.Route )]
+    [Route( $"{Routes.BaseRoute}/{RefreshTokenRequest.Route}" )]
     public class RefreshToken : EndpointBaseAsync
         .WithRequest<RefreshTokenRequest>
         .WithActionResult<RefreshTokenResponse> {

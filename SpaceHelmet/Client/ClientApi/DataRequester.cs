@@ -42,7 +42,6 @@ namespace SpaceHelmet.Client.ClientApi {
             var request = new ClientRequest( "data needed" );
             var response = await mHttpHandler.Post<ClientResponse>( ClientRequest.Route, request );
 
-
             if( response?.Succeeded == true ) {
                 await  Task.Delay( TimeSpan.FromSeconds( 5 ));
 

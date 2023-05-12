@@ -1,13 +1,13 @@
 ﻿using System;
 
-namespace TokenAuthentication.Support {
-    internal interface ITimeProvider {
+namespace TokenClientSupport.Support {
+    public interface ITimeProvider {
         DateOnly        CurrentDate { get; }
         DateTime        CurrentDateTime { get; }
         DateTime        CurrentUtcTime { get; }
     }
 
-    internal static class DateTimeProvider {
+    public static class DateTimeProvider {
         private static ITimeProvider ?  mTimeProvider;
 
         public  static ITimeProvider    Instance => mTimeProvider ?? CreateProvider();

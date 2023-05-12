@@ -1,17 +1,17 @@
 ﻿using System;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading;
-using System.Threading.Tasks;
 using Blazored.LocalStorage;
-using SpaceHelmet.Client.Constants;
+using System.Net.Http.Headers;
+using System.Net.Http;
+using System.Threading.Tasks;
+using System.Threading;
+using TokenClientSupport.Constants;
 
-namespace SpaceHelmet.Client.Auth.Support {
-    public class JwtTokenHandler : DelegatingHandler {
+namespace TokenClientSupport.RefreshTokens {
+    public class TokenHandler : DelegatingHandler {
         private readonly ITokenRefresher        mTokenRefresher;
         private readonly ILocalStorageService   mLocalStorage;
 
-        public JwtTokenHandler( ITokenRefresher tokenRefresher, ILocalStorageService storageService ) {
+        public TokenHandler( ITokenRefresher tokenRefresher, ILocalStorageService storageService ) {
             mTokenRefresher = tokenRefresher;
             mLocalStorage = storageService;
         }
@@ -25,16 +25,16 @@ namespace SpaceHelmet.Client.Auth.Support {
                  }
             }
 
-            var authToken = await mLocalStorage.GetItemAsStringAsync( LocalStorageNames.AuthToken, cancellationToken );
-            var refreshToken = await mLocalStorage.GetItemAsStringAsync( LocalStorageNames.RefreshToken, cancellationToken );
+            var authToken = await mLocalStorage.GetItemAsStringAsync( TokenStorageNames.AuthToken, cancellationToken );
+            var refreshToken = await mLocalStorage.GetItemAsStringAsync( TokenStorageNames.RefreshToken, cancellationToken );
 
             if(!String.IsNullOrWhiteSpace( authToken )) {
                 request.Headers.Authorization = new AuthenticationHeaderValue( "bearer", authToken );
 
                 // push our tokens through the request, they will be checked in the response handler to
                 // determine if they have been updated. Getting to the AuthFacade is not possible in this context.
-                request.Headers.Add( LocalStorageNames.AuthToken, authToken );
-                request.Headers.Add( LocalStorageNames.RefreshToken, refreshToken );
+                request.Headers.Add( TokenStorageNames.AuthToken, authToken );
+                request.Headers.Add( TokenStorageNames.RefreshToken, refreshToken );
             }
 
             return await base.SendAsync( request, cancellationToken );

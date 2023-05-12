@@ -6,7 +6,6 @@ using Fluxor;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
 using SpaceHelmet.Client;
@@ -21,11 +20,12 @@ using SpaceHelmet.Client.Ui;
 using SpaceHelmet.Client.Users.Store;
 using SpaceHelmet.Shared.Dto.Auth;
 using TokenClientSupport.Configuration;
+using TokenClientSupport.RefreshTokens;
 
 var builder = WebAssemblyHostBuilder.CreateDefault( args );
 
 ConfigureRootComponents( builder.RootComponents );
-ConfigureServices( builder.Services, builder.Configuration );
+ConfigureServices( builder.Services );
 
 await builder.Build().RunAsync();
 
@@ -35,23 +35,20 @@ void ConfigureRootComponents( RootComponentMappingCollection root ) {
     root.Add<HeadOutlet>( "head::after" );
 }
 
-void ConfigureServices( IServiceCollection services, WebAssemblyHostConfiguration configuration ) {
+void ConfigureServices( IServiceCollection services ) {
     services.AddHttpClient( HttpClientNames.Authenticated, 
                             client => client.BaseAddress = new Uri( builder.HostEnvironment.BaseAddress ))
-        .AddHttpMessageHandler<JwtTokenHandler>()
+        .AddHttpMessageHandler<TokenHandler>()
         .AddPolicyHandler( RetryPolicyHandler.GetAuthorizedRetryPolicy());
     services.AddScoped( sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient( HttpClientNames.Authenticated ));
-    services.AddScoped<JwtTokenHandler>();
 
     services.AddHttpClient( HttpClientNames.Anonymous,
                             client => client.BaseAddress = new Uri( builder.HostEnvironment.BaseAddress ))
         .AddPolicyHandler( RetryPolicyHandler.GetAnonymousRetryPolicy());
-
     services.AddScoped( sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient( HttpClientNames.Anonymous ));
 
-    services.AddTokenConfiguration( configuration );
+    services.AddTokenConfiguration( builder );
 
-    services.AddScoped<ITokenRefresher, JwtTokenRefresher>();
     services.AddScoped<ITokenExpirationChecker, TokenExpirationChecker>();
 
     services.AddScoped<IResponseStatusHandler, ResponseStatusHandler>();

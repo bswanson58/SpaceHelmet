@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using SpaceHelmet.Client.Auth.Actions;
 using SpaceHelmet.Client.Auth.Store;
 using SpaceHelmet.Client.Auth.Support;
-using SpaceHelmet.Client.Constants;
+using TokenClientSupport.Constants;
 
 namespace SpaceHelmet.Client.Auth.Effects {
     // ReSharper disable once UnusedType.Global
@@ -26,12 +26,12 @@ namespace SpaceHelmet.Client.Auth.Effects {
 
         public override async Task HandleAsync( SetAuthToken action, IDispatcher dispatcher ) {
             if( String.IsNullOrWhiteSpace( action.Token )) {
-                await mLocalStorage.RemoveItemAsync( LocalStorageNames.AuthToken );
-                await mLocalStorage.RemoveItemAsync( LocalStorageNames.RefreshToken );
+                await mLocalStorage.RemoveItemAsync( TokenStorageNames.AuthToken );
+                await mLocalStorage.RemoveItemAsync( TokenStorageNames.RefreshToken );
             }
             else {
-                await mLocalStorage.SetItemAsStringAsync( LocalStorageNames.AuthToken, action.Token );
-                await mLocalStorage.SetItemAsStringAsync( LocalStorageNames.RefreshToken, action.RefreshToken );
+                await mLocalStorage.SetItemAsStringAsync( TokenStorageNames.AuthToken, action.Token );
+                await mLocalStorage.SetItemAsStringAsync( TokenStorageNames.RefreshToken, action.RefreshToken );
             }
 
             if( mAuthStateProvider is AuthStateProvider authProvider ) {

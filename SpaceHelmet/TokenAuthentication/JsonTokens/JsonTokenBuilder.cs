@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using TokenAuthentication.Constants;
 using TokenAuthentication.Interfaces;
 using TokenAuthentication.Models;
 using TokenAuthentication.Settings;
-using TokenAuthentication.Support;
+using TokenClientSupport.Constants;
+using TokenClientSupport.Support;
 
 namespace TokenAuthentication.JsonTokens {
     public class JsonTokenBuilder : ITokenBuilder {
