@@ -21,7 +21,10 @@ namespace SpaceHelmet.Server.Models {
 
         public static IdentityOptions LoadPasswordRequirements( IConfiguration configuration, IdentityOptions options ) {
             var passwordRequirements = 
-                configuration.GetSection( "PasswordRequirements" ).Get<PasswordRequirements>() ?? new PasswordRequirements();
+                configuration
+                    .GetSection( "PasswordRequirements" )
+                    .Get<PasswordRequirements>() ?? 
+                new PasswordRequirements();
 
             options.Password.RequiredUniqueChars = passwordRequirements.RequiredUniqueChars;
             options.Password.RequireDigit = passwordRequirements.RequireDigit;

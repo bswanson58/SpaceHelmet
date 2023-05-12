@@ -23,8 +23,7 @@ ConfigurePipeline( app );
 app.Run();
 
 void ConfigureServices( IServiceCollection services, ConfigurationManager configuration ) {
-    services.AddControllersWithViews();
-    services.AddRazorPages();
+    services.AddControllers();
 
     services.AddDbContext<SpaceHelmetDbContext>( options => {
         options.UseSqlServer( configuration.GetConnectionString( "DatabaseConnection" ), sqlOptions => {
@@ -41,10 +40,7 @@ void ConfigureServices( IServiceCollection services, ConfigurationManager config
     });
 
     services.AddEntityProviders();
-    services.AddScoped<IDbContext, SpaceHelmetDbContext>();
     services.AddScoped<IUserService, UserService>();
-
-    services.AddHttpClient();
 
     services.AddValidatorsFromAssemblyContaining<LoginUserRequestValidator>();
 }
@@ -80,7 +76,6 @@ void ConfigurePipeline( WebApplication webApp ) {
 
     webApp.UseRouting();
 
-    webApp.MapRazorPages();
     webApp.MapControllers();
     webApp.MapFallbackToFile( "index.html" );
 
