@@ -1,14 +1,10 @@
-﻿using System;
-using TokenClientSupport.Settings;
-
-namespace TokenAuthentication.Settings {
-
-    public class TokenOptions {
+﻿namespace TokenClientSupport.Settings {
+    public class ClientTokenOptions {
         public  bool        UseTokens { get; set; }
         public  bool        UseRefreshTokens { get; set; }
         public  string      TokenStyle { get; set; }
 
-        public TokenOptions() {
+        public ClientTokenOptions() {
             UseTokens = false;
             UseRefreshTokens = false;
             TokenStyle = TokenStyles.JsonWebTokens;

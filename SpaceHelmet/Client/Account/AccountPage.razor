@@ -2,9 +2,9 @@
 @using Fluxor
 @using System.Security.Claims
 @using SpaceHelmet.Client.Auth.Store
-@using SpaceHelmet.Client.Auth.Support
 @using SpaceHelmet.Client.Shared
 @using SpaceHelmet.Shared.Constants
+@using TokenClientSupport.Interfaces
 
 @attribute [Route( NavLinks.Account )]
 @attribute [Authorize( Roles = ClaimValues.cUser )]

@@ -4,6 +4,7 @@ using SpaceHelmet.Shared.Constants;
 using Fluxor;
 using SpaceHelmet.Client.Auth.Store;
 using SpaceHelmet.Shared.Support;
+using TokenClientSupport.Interfaces;
 
 namespace SpaceHelmet.Client.Auth.Support {
     public interface IAuthInformation {

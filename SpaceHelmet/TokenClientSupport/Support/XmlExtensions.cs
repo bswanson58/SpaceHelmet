@@ -1,7 +1,8 @@
-﻿using System.Xml;
+﻿using System.IO;
 using System.Xml.Serialization;
+using System.Xml;
 
-namespace SpaceHelmet.Shared.Support {
+namespace TokenClientSupport.Support {
     public static class Extensions {
         public static T ? Deserialize<T>( this string value ) {
             var xmlSerializer = new XmlSerializer(typeof(T));

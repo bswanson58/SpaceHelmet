@@ -6,6 +6,7 @@ using SpaceHelmet.Shared.Constants;
 using SpaceHelmet.Shared.Support;
 using Microsoft.AspNetCore.Components.Authorization;
 using SpaceHelmet.Client.Constants;
+using TokenClientSupport.Interfaces;
 
 namespace SpaceHelmet.Client.Auth.Support {
     public class AuthStateProvider : AuthenticationStateProvider {

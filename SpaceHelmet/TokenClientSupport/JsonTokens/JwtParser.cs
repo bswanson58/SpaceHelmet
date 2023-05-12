@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Text.Json;
+using TokenClientSupport.Interfaces;
 
-namespace SpaceHelmet.Client.Auth.Support {
-    public class JwtTokenParser : ITokenParser {
+namespace TokenClientSupport.JsonTokens {
+    public class JwtParser : ITokenParser {
         public IEnumerable<Claim>  GetClaims( string token ) => 
             JwtStaticParser.GetClaims( token );
 

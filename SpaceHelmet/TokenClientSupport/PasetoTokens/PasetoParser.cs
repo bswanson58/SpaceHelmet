@@ -1,13 +1,14 @@
 ﻿using System;
-using Paseto.Builder;
-using Paseto;
-using SpaceHelmet.Shared.Entities;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using SpaceHelmet.Shared.Support;
+using Paseto;
+using Paseto.Builder;
+using TokenClientSupport.Entities;
+using TokenClientSupport.Interfaces;
+using TokenClientSupport.Support;
 
-namespace SpaceHelmet.Client.Auth.Support {
+namespace TokenClientSupport.PasetoTokens {
     public class PasetoParser : ITokenParser {
         public IEnumerable<Claim> GetClaims( string token ) {
             if(!String.IsNullOrWhiteSpace( token )) {

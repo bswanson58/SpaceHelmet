@@ -9,6 +9,7 @@ using SpaceHelmet.Shared.Support;
 using Microsoft.Extensions.Logging;
 using SpaceHelmet.Client.Constants;
 using SpaceHelmet.Shared.Constants;
+using TokenClientSupport.Interfaces;
 
 namespace SpaceHelmet.Client.Auth.Support {
     public interface ITokenRefresher {

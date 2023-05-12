@@ -10,6 +10,7 @@ using TokenAuthentication.JsonTokens;
 using TokenAuthentication.PasetoTokens;
 using TokenAuthentication.RefreshTokens;
 using TokenAuthentication.Settings;
+using TokenClientSupport.Settings;
 
 namespace TokenAuthentication.Configuration {
     public static class TokenConfiguration {

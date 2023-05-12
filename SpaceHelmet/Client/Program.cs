@@ -6,6 +6,7 @@ using Fluxor;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MudBlazor.Services;
 using SpaceHelmet.Client;
@@ -19,11 +20,12 @@ using SpaceHelmet.Client.Ui.Store;
 using SpaceHelmet.Client.Ui;
 using SpaceHelmet.Client.Users.Store;
 using SpaceHelmet.Shared.Dto.Auth;
+using TokenClientSupport.Configuration;
 
 var builder = WebAssemblyHostBuilder.CreateDefault( args );
 
 ConfigureRootComponents( builder.RootComponents );
-ConfigureServices( builder.Services );
+ConfigureServices( builder.Services, builder.Configuration );
 
 await builder.Build().RunAsync();
 
@@ -33,7 +35,7 @@ void ConfigureRootComponents( RootComponentMappingCollection root ) {
     root.Add<HeadOutlet>( "head::after" );
 }
 
-void ConfigureServices( IServiceCollection services ) {
+void ConfigureServices( IServiceCollection services, WebAssemblyHostConfiguration configuration ) {
     services.AddHttpClient( HttpClientNames.Authenticated, 
                             client => client.BaseAddress = new Uri( builder.HostEnvironment.BaseAddress ))
         .AddHttpMessageHandler<JwtTokenHandler>()
@@ -47,7 +49,8 @@ void ConfigureServices( IServiceCollection services ) {
 
     services.AddScoped( sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient( HttpClientNames.Anonymous ));
 
-    services.AddScoped<ITokenParser, PasetoParser>();
+    services.AddTokenConfiguration( configuration );
+
     services.AddScoped<ITokenRefresher, JwtTokenRefresher>();
     services.AddScoped<ITokenExpirationChecker, TokenExpirationChecker>();
 

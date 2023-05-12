@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Shared\SpaceHelmet.Shared.csproj" />
+    <ProjectReference Include="..\TokenClientSupport\TokenClientSupport.csproj" />
   </ItemGroup>
 
   <ItemGroup>

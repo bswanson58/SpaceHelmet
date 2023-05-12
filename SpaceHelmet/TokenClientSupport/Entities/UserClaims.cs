@@ -1,8 +1,11 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Security.Claims;
 using System.Text.Json.Serialization;
 
-namespace SpaceHelmet.Shared.Entities {
+namespace TokenClientSupport.Entities {
     [DebuggerDisplay("Claim: {" + nameof( ClaimType ) + "}")]
     public class UserClaim {
         public  string  ClaimType { get; set; }
