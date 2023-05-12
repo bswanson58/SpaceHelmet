@@ -45,7 +45,7 @@ namespace SpaceHelmet.Server.Auth {
                 var token = await mTokenBuilder.GenerateToken( user );
 
                 user.RefreshToken = token.RefreshToken;
-                user.RefreshTokenExpiration = token.ExpiresAt;
+                user.RefreshTokenExpiration = token.RefreshExpiresAt;
 
                 await mUserManager.UpdateAsync( user );
 

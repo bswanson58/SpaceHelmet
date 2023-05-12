@@ -34,14 +34,14 @@ namespace SpaceHelmet.Server.Auth {
 
             if(( user == null ) ||
                ( user.RefreshToken != request.RefreshToken ) ||
-               ( user.RefreshTokenExpiration <= DateTimeProvider.Instance.CurrentDateTime )) {
+               ( user.RefreshTokenExpiration <= DateTimeProvider.Instance.CurrentUtcTime )) {
                 return Unauthorized( new RefreshTokenResponse( "Invalid client request" ));
             }
 
             var token = await mTokenBuilder.GenerateToken( user );
 
             user.RefreshToken = token.RefreshToken;
-            user.RefreshTokenExpiration = token.ExpiresAt;
+            user.RefreshTokenExpiration = token.RefreshExpiresAt;
 
             await mUserManager.UpdateAsync( user );
 
