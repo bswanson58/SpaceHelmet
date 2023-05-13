@@ -3,7 +3,6 @@ using System.Net.Http;
 using Blazored.LocalStorage;
 using FluentValidation;
 using Fluxor;
-using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -74,7 +73,6 @@ void ConfigureServices( IServiceCollection services ) {
 
     services.AddBlazoredLocalStorage();
 
-    services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
     services.AddScoped<IAuthInformation, AuthInformation>();
     services.AddAuthorizationCore();
 

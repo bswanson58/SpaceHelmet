@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using SpaceHelmet.Shared.Constants;
-using SpaceHelmet.Shared.Support;
 using Microsoft.AspNetCore.Components.Authorization;
+using TokenClientSupport.Constants;
 using TokenClientSupport.Interfaces;
-using ClaimValues = SpaceHelmet.Shared.Constants.ClaimValues;
+using TokenClientSupport.Support;
 
-namespace SpaceHelmet.Client.Auth.Support {
-    public class AuthStateProvider : AuthenticationStateProvider {
+namespace TokenClientSupport.Authentication {
+    public class TokenAuthenticationStateProvider : AuthenticationStateProvider {
         private readonly ITokenStorageProvider  mTokenProvider;
         private readonly ITokenParser           mTokenParser;
         private readonly AuthenticationState    mAnonymous;
 
-        public AuthStateProvider( ITokenParser tokenParser, ITokenStorageProvider tokenProvider ) {
+        public TokenAuthenticationStateProvider( ITokenParser tokenParser, ITokenStorageProvider tokenProvider ) {
             mTokenParser = tokenParser;
             mTokenProvider = tokenProvider;
 
@@ -23,7 +22,7 @@ namespace SpaceHelmet.Client.Auth.Support {
         private AuthenticationState CreateAuthenticationState( string fromToken ) {
             return new AuthenticationState( 
                 new ClaimsPrincipal( 
-                    new ClaimsIdentity( mTokenParser.GetClaims( fromToken ), JwtConstants.JwtAuthType )));
+                    new ClaimsIdentity( mTokenParser.GetClaims( fromToken ), ClaimValues.AuthType )));
         }
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync() {

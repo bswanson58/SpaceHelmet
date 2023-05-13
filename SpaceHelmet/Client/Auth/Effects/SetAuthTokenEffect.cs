@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using SpaceHelmet.Client.Auth.Actions;
 using SpaceHelmet.Client.Auth.Store;
 using SpaceHelmet.Client.Auth.Support;
+using TokenClientSupport.Authentication;
 using TokenClientSupport.Interfaces;
 
 namespace SpaceHelmet.Client.Auth.Effects {
@@ -32,7 +33,7 @@ namespace SpaceHelmet.Client.Auth.Effects {
                 await mTokenProvider.StoreRefreshToken( action.RefreshToken );
             }
 
-            if( mAuthStateProvider is AuthStateProvider authProvider ) {
+            if( mAuthStateProvider is TokenAuthenticationStateProvider authProvider ) {
                 authProvider.SetUserAuthentication();
             }
 

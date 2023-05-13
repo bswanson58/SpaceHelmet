@@ -1,9 +1,11 @@
 ﻿using System;
 using System.IO;
 using System.Net.Http;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using TokenClientSupport.Authentication;
 using TokenClientSupport.Constants;
 using TokenClientSupport.Interfaces;
 using TokenClientSupport.JsonTokens;
@@ -39,6 +41,7 @@ namespace TokenClientSupport.Configuration {
             services.AddScoped<TokenHandler>();
             services.AddScoped<ITokenRefresher, TokenRefresher>();
             services.AddSingleton<ITokenStorageProvider, SimpleTokenProvider>();
+            services.AddScoped<AuthenticationStateProvider, TokenAuthenticationStateProvider>();
 
             var serverRoute = String.IsNullOrWhiteSpace( tokenOptions.BaseRoute ) ?
                                     builder.HostEnvironment.BaseAddress :
