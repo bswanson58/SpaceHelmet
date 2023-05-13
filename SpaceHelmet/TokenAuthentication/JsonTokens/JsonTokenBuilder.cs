@@ -19,7 +19,7 @@ namespace TokenAuthentication.JsonTokens {
         private readonly IClaimBuilder                  mClaimBuilder;
         private readonly IRefreshTokenProvider          mRefreshTokenProvider;
         private readonly IOptions<JsonTokenOptions>     mJsonTokenOptions;
-        private readonly ILogger<JsonTokenBuilder>       mLog;
+        private readonly ILogger<JsonTokenBuilder>      mLog;
 
         public JsonTokenBuilder( IClaimBuilder claimBuilder, IRefreshTokenProvider refreshTokenProvider,
                                  IOptions<JsonTokenOptions> jsonTokenOptions, ILogger<JsonTokenBuilder> log ) {
@@ -41,16 +41,10 @@ namespace TokenAuthentication.JsonTokens {
                 new( ClaimValues.RefreshName, user.UserName ?? String.Empty ),
             };
 
-            var dbClaims = await mClaimBuilder.GetClaimsAsync( user );
-
-            claims.AddRange( dbClaims );
+            claims.AddRange( await mClaimBuilder.GetClaimsAsync( user ));
 
             var dbRoles = ( await mClaimBuilder.GetRolesAsync( user )).ToList();
-
-            claims.Add(
-                dbRoles.Count > 1
-                    ? new Claim( ClaimTypes.Role, $"[{string.Join( ",", dbRoles )}]" )
-                    : new Claim( ClaimTypes.Role, dbRoles.First()));
+            claims.AddRange( dbRoles.Select( c => new Claim( ClaimTypes.Role, c )));
 
             return claims;
         }

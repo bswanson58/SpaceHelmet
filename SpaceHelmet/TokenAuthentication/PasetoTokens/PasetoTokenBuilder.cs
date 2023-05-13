@@ -26,7 +26,7 @@ namespace TokenAuthentication.PasetoTokens {
         }
 
         public async Task<WebToken> GenerateToken( TokenUser forUser ) {
-            var claims = await BuildUserClaims(forUser);
+            var claims = await BuildUserClaims( forUser );
             var identity = new ClaimsIdentity(
                 new GenericIdentity( forUser.Id, "paseto" ),
                 claims.Concat(

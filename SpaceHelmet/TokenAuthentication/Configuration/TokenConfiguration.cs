@@ -21,7 +21,7 @@ namespace TokenAuthentication.Configuration {
                                new TokenOptions();
 
             if( tokenOptions.UseTokens ) {
-                switch( tokenOptions.TokenStyle.ToLower() ) {
+                switch( tokenOptions.TokenStyle.ToLower()) {
                     case TokenStyles.JsonWebTokens:
                         AddJwtTokens( services, configuration );
                         break;
@@ -53,14 +53,15 @@ namespace TokenAuthentication.Configuration {
                 options.DefaultChallengeScheme = PasetoDefaults.Bearer;
                 options.DefaultAuthenticateScheme = PasetoDefaults.Bearer;
                 options.DefaultScheme = PasetoDefaults.Bearer;
-            } ).AddPaseto( options => {
-                options.Audience = pasetoOptions.Audience;
-                options.TokenExpiration = pasetoOptions.TokenExpiration;
-                options.Issuer = pasetoOptions.Issuer;
-                options.ClockSkew = pasetoOptions.ClockSkew;
-                options.SecretKey = pasetoOptions.SecretKey;
-                options.ValidateAudience = pasetoOptions.ValidateAudience;
-                options.ValidateIssuer = pasetoOptions.ValidateIssuer;
+            } )
+                .AddPaseto( options => {
+                    options.Audience = pasetoOptions.Audience;
+                    options.TokenExpiration = pasetoOptions.TokenExpiration;
+                    options.Issuer = pasetoOptions.Issuer;
+                    options.ClockSkew = pasetoOptions.ClockSkew;
+                    options.SecretKey = pasetoOptions.SecretKey;
+                    options.ValidateAudience = pasetoOptions.ValidateAudience;
+                    options.ValidateIssuer = pasetoOptions.ValidateIssuer;
             } );
 
             services.AddScoped<ITokenBuilder, PasetoTokenBuilder>();
@@ -92,6 +93,7 @@ namespace TokenAuthentication.Configuration {
                         };
                 } );
 
+            services.Configure<JsonTokenOptions>( configuration.GetSection( nameof( JsonTokenOptions )));
             services.AddScoped<ITokenBuilder, JsonTokenBuilder>();
         }
     }
