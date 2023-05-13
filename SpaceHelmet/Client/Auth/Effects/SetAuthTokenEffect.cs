@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Blazored.LocalStorage;
 using Fluxor;
 using Microsoft.AspNetCore.Components.Authorization;
 using SpaceHelmet.Client.Auth.Actions;
 using SpaceHelmet.Client.Auth.Store;
 using SpaceHelmet.Client.Auth.Support;
-using TokenClientSupport.Constants;
+using TokenClientSupport.Interfaces;
 
 namespace SpaceHelmet.Client.Auth.Effects {
     // ReSharper disable once UnusedType.Global
@@ -14,24 +13,23 @@ namespace SpaceHelmet.Client.Auth.Effects {
         private readonly IAppStartup                    mAppStartup;
         private readonly AuthenticationStateProvider    mAuthStateProvider;
         private readonly AuthFacade                     mAuthFacade;
-        private readonly ILocalStorageService           mLocalStorage;
+        private readonly ITokenStorageProvider          mTokenProvider;
 
         public SetAuthTokenEffect( AuthenticationStateProvider authStateProvider, AuthFacade authFacade,
-                                   ILocalStorageService localStorage, IAppStartup appStartup ) {
+                                   ITokenStorageProvider tokenProvider, IAppStartup appStartup ) {
             mAuthStateProvider = authStateProvider;
             mAuthFacade = authFacade;
-            mLocalStorage = localStorage;
+            mTokenProvider = tokenProvider;
             mAppStartup = appStartup;
         }
 
         public override async Task HandleAsync( SetAuthToken action, IDispatcher dispatcher ) {
             if( String.IsNullOrWhiteSpace( action.Token )) {
-                await mLocalStorage.RemoveItemAsync( TokenStorageNames.AuthToken );
-                await mLocalStorage.RemoveItemAsync( TokenStorageNames.RefreshToken );
+                await mTokenProvider.ClearTokenValues();
             }
             else {
-                await mLocalStorage.SetItemAsStringAsync( TokenStorageNames.AuthToken, action.Token );
-                await mLocalStorage.SetItemAsStringAsync( TokenStorageNames.RefreshToken, action.RefreshToken );
+                await mTokenProvider.StoreAuthenticationToken( action.Token );
+                await mTokenProvider.StoreRefreshToken( action.RefreshToken );
             }
 
             if( mAuthStateProvider is AuthStateProvider authProvider ) {

@@ -20,6 +20,7 @@ using SpaceHelmet.Client.Ui;
 using SpaceHelmet.Client.Users.Store;
 using SpaceHelmet.Shared.Dto.Auth;
 using TokenClientSupport.Configuration;
+using TokenClientSupport.Interfaces;
 using TokenClientSupport.RefreshTokens;
 
 var builder = WebAssemblyHostBuilder.CreateDefault( args );
@@ -50,6 +51,7 @@ void ConfigureServices( IServiceCollection services ) {
     services.AddTokenConfiguration( builder );
 
     services.AddScoped<ITokenExpirationChecker, TokenExpirationChecker>();
+    services.AddScoped<ITokenStorageProvider, LocalStorageTokenProvider>();
 
     services.AddScoped<IResponseStatusHandler, ResponseStatusHandler>();
     services.AddScoped<IAuthenticatedHttpHandler, AuthenticatedHttpHandler>();

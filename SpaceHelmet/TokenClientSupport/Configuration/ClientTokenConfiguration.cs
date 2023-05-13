@@ -10,6 +10,7 @@ using TokenClientSupport.JsonTokens;
 using TokenClientSupport.PasetoTokens;
 using TokenClientSupport.RefreshTokens;
 using TokenClientSupport.Settings;
+using TokenClientSupport.Support;
 
 namespace TokenClientSupport.Configuration {
     public static class ClientTokenConfiguration {
@@ -37,6 +38,7 @@ namespace TokenClientSupport.Configuration {
 
             services.AddScoped<TokenHandler>();
             services.AddScoped<ITokenRefresher, TokenRefresher>();
+            services.AddSingleton<ITokenStorageProvider, SimpleTokenProvider>();
 
             var serverRoute = String.IsNullOrWhiteSpace( tokenOptions.BaseRoute ) ?
                                     builder.HostEnvironment.BaseAddress :
@@ -54,12 +56,10 @@ namespace TokenClientSupport.Configuration {
 
         private static void ConfigureJsonTokens( IServiceCollection services ) {
             services.AddScoped<ITokenParser, JwtParser>();
-
         }
 
         private static void ConfigurePasetoTokens( IServiceCollection services ) {
             services.AddScoped<ITokenParser, PasetoParser>();
-
         }
     }
 }

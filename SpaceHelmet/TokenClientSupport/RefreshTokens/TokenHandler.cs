@@ -1,19 +1,19 @@
 ﻿using System;
-using Blazored.LocalStorage;
 using System.Net.Http.Headers;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Threading;
 using TokenClientSupport.Constants;
+using TokenClientSupport.Interfaces;
 
 namespace TokenClientSupport.RefreshTokens {
     public class TokenHandler : DelegatingHandler {
         private readonly ITokenRefresher        mTokenRefresher;
-        private readonly ILocalStorageService   mLocalStorage;
+        private readonly ITokenStorageProvider  mTokenProvider;
 
-        public TokenHandler( ITokenRefresher tokenRefresher, ILocalStorageService storageService ) {
+        public TokenHandler( ITokenRefresher tokenRefresher, ITokenStorageProvider tokenProvider ) {
             mTokenRefresher = tokenRefresher;
-            mLocalStorage = storageService;
+            mTokenProvider = tokenProvider;
         }
 
         protected override async Task<HttpResponseMessage> SendAsync( HttpRequestMessage request, CancellationToken cancellationToken ) {
@@ -25,8 +25,8 @@ namespace TokenClientSupport.RefreshTokens {
                  }
             }
 
-            var authToken = await mLocalStorage.GetItemAsStringAsync( TokenStorageNames.AuthToken, cancellationToken );
-            var refreshToken = await mLocalStorage.GetItemAsStringAsync( TokenStorageNames.RefreshToken, cancellationToken );
+            var authToken = await mTokenProvider.GetAuthenticationToken( cancellationToken );
+            var refreshToken = await mTokenProvider.GetRefreshToken( cancellationToken );
 
             if(!String.IsNullOrWhiteSpace( authToken )) {
                 request.Headers.Authorization = new AuthenticationHeaderValue( "bearer", authToken );

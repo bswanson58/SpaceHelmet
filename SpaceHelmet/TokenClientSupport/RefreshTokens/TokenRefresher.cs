@@ -4,7 +4,6 @@ using System.Net;
 using System.Threading.Tasks;
 using System;
 using System.Net.Http.Json;
-using Blazored.LocalStorage;
 using TokenClientSupport.Constants;
 using TokenClientSupport.Dto;
 using TokenClientSupport.Interfaces;
@@ -19,19 +18,19 @@ namespace TokenClientSupport.RefreshTokens {
     public class TokenRefresher : ITokenRefresher {
         private readonly IHttpClientFactory         mClientFactory;
         private readonly ITokenParser               mTokenParser;
-        private readonly ILocalStorageService       mLocalStorage;
+        private readonly ITokenStorageProvider      mTokenProvider;
         private readonly ILogger<TokenRefresher>    mLog;
 
-        public TokenRefresher( IHttpClientFactory clientFactory, ILocalStorageService localStorage,
+        public TokenRefresher( IHttpClientFactory clientFactory, ITokenStorageProvider tokenProvider,
                                ITokenParser tokenParser, ILogger<TokenRefresher> log ) {
             mClientFactory = clientFactory;
-            mLocalStorage = localStorage;
+            mTokenProvider = tokenProvider;
             mTokenParser = tokenParser;
             mLog = log;
         }
 
         private async Task<DateTimeOffset> TokenExpirationTime() {
-            var token = await mLocalStorage.GetItemAsStringAsync( TokenStorageNames.AuthToken );
+            var token = await mTokenProvider.GetAuthenticationToken();
             var expiration = mTokenParser.GetClaimValue( token, ClaimValues.Expiration );
 
             if(!String.IsNullOrWhiteSpace( expiration )) {
@@ -50,8 +49,8 @@ namespace TokenClientSupport.RefreshTokens {
 
         public async Task<HttpResponseMessage> RefreshToken() {
             try {
-                var authToken = await mLocalStorage.GetItemAsStringAsync( TokenStorageNames.AuthToken );
-                var refreshToken = await mLocalStorage.GetItemAsStringAsync( TokenStorageNames.RefreshToken );
+                var authToken = await mTokenProvider.GetAuthenticationToken();
+                var refreshToken = await mTokenProvider.GetRefreshToken();
 
                 if((!String.IsNullOrWhiteSpace( authToken )) &&
                    (!String.IsNullOrWhiteSpace( refreshToken ))) {
@@ -67,8 +66,8 @@ namespace TokenClientSupport.RefreshTokens {
                         var response = await postResponse.Content.ReadFromJsonAsync<RefreshTokenResponse>();
 
                         if( response?.Succeeded == true ) {
-                            await mLocalStorage.SetItemAsStringAsync( TokenStorageNames.AuthToken, response.Token );
-                            await mLocalStorage.SetItemAsStringAsync( TokenStorageNames.RefreshToken, response.RefreshToken );
+                            await mTokenProvider.StoreAuthenticationToken( response.Token );
+                            await mTokenProvider.StoreRefreshToken( response.RefreshToken );
                         }
                     }
 

@@ -1,23 +1,21 @@
 ﻿using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Blazored.LocalStorage;
 using SpaceHelmet.Shared.Constants;
 using SpaceHelmet.Shared.Support;
 using Microsoft.AspNetCore.Components.Authorization;
-using TokenClientSupport.Constants;
 using TokenClientSupport.Interfaces;
 using ClaimValues = SpaceHelmet.Shared.Constants.ClaimValues;
 
 namespace SpaceHelmet.Client.Auth.Support {
     public class AuthStateProvider : AuthenticationStateProvider {
-        private readonly ILocalStorageService   mLocalStorage;
+        private readonly ITokenStorageProvider  mTokenProvider;
         private readonly ITokenParser           mTokenParser;
         private readonly AuthenticationState    mAnonymous;
 
-        public AuthStateProvider( ILocalStorageService localStorage, ITokenParser tokenParser ) {
-            mLocalStorage = localStorage;
+        public AuthStateProvider( ITokenParser tokenParser, ITokenStorageProvider tokenProvider ) {
             mTokenParser = tokenParser;
+            mTokenProvider = tokenProvider;
 
             mAnonymous = new AuthenticationState( new ClaimsPrincipal( new ClaimsIdentity()));
         }
@@ -29,7 +27,7 @@ namespace SpaceHelmet.Client.Auth.Support {
         }
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync() {
-            var token = await mLocalStorage.GetItemAsStringAsync( TokenStorageNames.AuthToken );
+            var token = await mTokenProvider.GetAuthenticationToken();
             var expiration = mTokenParser.GetClaimValue( token, ClaimValues.Expiration );
 
             if(!String.IsNullOrWhiteSpace( expiration )) {

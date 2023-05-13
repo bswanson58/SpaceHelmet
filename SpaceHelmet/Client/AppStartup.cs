@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components;
 using SpaceHelmet.Client.Auth.Store;
 using SpaceHelmet.Client.Auth.Support;
 using SpaceHelmet.Client.ClientApi;
 using SpaceHelmet.Client.Shared;
 using SpaceHelmet.Client.Support;
-using TokenClientSupport.Constants;
+using TokenClientSupport.Interfaces;
 
 namespace SpaceHelmet.Client {
     public interface IAppStartup : IDisposable {
@@ -20,24 +19,24 @@ namespace SpaceHelmet.Client {
         private readonly AuthFacade                 mAuthFacade;
         private readonly IAuthInformation           mAuthInformation;
         private readonly NavigationManager          mNavigationManager;
-        private readonly ILocalStorageService       mLocalStorage;
+        private readonly ITokenStorageProvider      mTokenProvider;
         private readonly ITokenExpirationChecker    mTokenChecker;
         private readonly IDataRequester             mDataRequester;
 
         public AppStartup( AuthFacade authFacade, NavigationManager navigationManager,
-                           ILocalStorageService localStorageService, IDataRequester dataRequester,
+                           ITokenStorageProvider tokenProvider, IDataRequester dataRequester,
                            ITokenExpirationChecker tokenChecker, IAuthInformation authInformation ) {
             mAuthFacade = authFacade;
             mNavigationManager = navigationManager;
-            mLocalStorage = localStorageService;
+            mTokenProvider = tokenProvider;
             mTokenChecker = tokenChecker;
             mAuthInformation = authInformation;
             mDataRequester = dataRequester;
         }
 
         public async Task OnStartup() {
-            var token = await mLocalStorage.GetItemAsStringAsync( TokenStorageNames.AuthToken );
-            var refresh = await mLocalStorage.GetItemAsStringAsync( TokenStorageNames.RefreshToken );
+            var token = await mTokenProvider.GetAuthenticationToken();
+            var refresh = await mTokenProvider.GetRefreshToken();
 
             if( mAuthInformation.IsTokenValid( token )) {
                 mAuthFacade.SetAuthenticationToken( token, refresh );
