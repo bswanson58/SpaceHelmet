@@ -49,7 +49,11 @@ namespace SpaceHelmet.Server.Auth {
 
                 await mUserManager.UpdateAsync( user );
 
-                return new LoginUserResponse( token.Token, token.RefreshToken, token.ExpiresAt );
+                var expirationTime = token.RefreshExpiresAt > token.ExpiresAt ? 
+                    token.RefreshExpiresAt : 
+                    token.ExpiresAt;
+
+                return new LoginUserResponse( token.Token, token.RefreshToken, expirationTime );
             }
             catch( Exception ex ) {
                 return Ok( new LoginUserResponse( ex ));

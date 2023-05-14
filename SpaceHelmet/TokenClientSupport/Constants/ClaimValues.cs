@@ -1,5 +1,6 @@
 ﻿namespace TokenClientSupport.Constants {
     public static class ClaimValues {
+        public static readonly string   AuthScheme      = "bearer";
         public static readonly string   AuthType        = "token";
 
         public static readonly string   ClaimEmail      = "email";

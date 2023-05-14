@@ -27,14 +27,16 @@ namespace TokenClientSupport.RefreshTokens {
 
             var authToken = await mTokenProvider.GetAuthenticationToken( cancellationToken );
             var refreshToken = await mTokenProvider.GetRefreshToken( cancellationToken );
+            var expiration = await mTokenProvider.GetTokenExpiration( cancellationToken );
 
             if(!String.IsNullOrWhiteSpace( authToken )) {
-                request.Headers.Authorization = new AuthenticationHeaderValue( "bearer", authToken );
+                request.Headers.Authorization = new AuthenticationHeaderValue( ClaimValues.AuthScheme, authToken );
 
                 // push our tokens through the request, they will be checked in the response handler to
                 // determine if they have been updated. Getting to the AuthFacade is not possible in this context.
                 request.Headers.Add( TokenStorageNames.AuthToken, authToken );
                 request.Headers.Add( TokenStorageNames.RefreshToken, refreshToken );
+                request.Headers.Add( TokenStorageNames.TokenExpiration, expiration.Ticks.ToString());
             }
 
             return await base.SendAsync( request, cancellationToken );

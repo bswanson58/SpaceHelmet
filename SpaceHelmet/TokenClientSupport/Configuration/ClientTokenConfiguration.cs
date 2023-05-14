@@ -39,9 +39,15 @@ namespace TokenClientSupport.Configuration {
             }
 
             services.AddScoped<TokenHandler>();
-            services.AddScoped<ITokenRefresher, TokenRefresher>();
             services.AddSingleton<ITokenStorageProvider, SimpleTokenProvider>();
             services.AddScoped<AuthenticationStateProvider, TokenAuthenticationStateProvider>();
+
+            if( tokenOptions.UseRefreshTokens ) {
+                services.AddScoped<ITokenRefresher, TokenRefresher>();
+            }
+            else {
+                services.AddScoped<ITokenRefresher, NullTokenRefresher>();
+            }
 
             var serverRoute = String.IsNullOrWhiteSpace( tokenOptions.BaseRoute ) ?
                                     builder.HostEnvironment.BaseAddress :

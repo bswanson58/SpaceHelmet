@@ -1,5 +1,4 @@
 ﻿using System;
-using SpaceHelmet.Shared.Support;
 using Fluxor;
 using SpaceHelmet.Client.Store;
 
@@ -19,6 +18,6 @@ namespace SpaceHelmet.Client.Auth.Store {
         }
 
         public static AuthState Factory() => 
-            new( false, string.Empty, String.Empty, String.Empty, DateTimeProvider.Instance.CurrentDateTime );
+            new( false, string.Empty, String.Empty, String.Empty, DateTime.MinValue );
     }
 }

@@ -68,6 +68,7 @@ namespace TokenClientSupport.RefreshTokens {
                         if( response?.Succeeded == true ) {
                             await mTokenProvider.StoreAuthenticationToken( response.Token );
                             await mTokenProvider.StoreRefreshToken( response.RefreshToken );
+                            await mTokenProvider.StoreTokenExpiration( response.TokenExpiration );
                         }
                     }
 

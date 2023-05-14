@@ -1,4 +1,5 @@
 ﻿using System;
+using TokenClientSupport.Support;
 
 namespace TokenAuthentication.Models {
     public class WebToken {
@@ -11,7 +12,7 @@ namespace TokenAuthentication.Models {
         public WebToken() {
             Token = String.Empty;
             RefreshToken = String.Empty;
-            CreatedAt = DateTime.Now;
+            CreatedAt = DateTimeProvider.Instance.CurrentUtcTime;
             ExpiresAt = DateTime.MaxValue;
             RefreshExpiresAt = DateTime.MaxValue;
         }

@@ -16,16 +16,16 @@ namespace SpaceHelmet.Client.Auth.Store {
             mNavigationManager = navigationManager;
         }
 
-        public void SetAuthenticationToken( string token, string refreshToken ) {
-            mDispatcher.Dispatch( new SetAuthToken( token, refreshToken, false ));
+        public void SetAuthenticationToken( string token, string refreshToken, DateTime expiration ) {
+            mDispatcher.Dispatch( new SetAuthToken( token, refreshToken, expiration, false ));
         }
 
         public void ClearAuthenticationToken() {
-            mDispatcher.Dispatch( new SetAuthToken( String.Empty, String.Empty, false ));
+            mDispatcher.Dispatch( new SetAuthToken( String.Empty, String.Empty, DateTime.MinValue, false ));
         }
 
-        public void SetRefreshToken( string token, string refreshToken ) {
-            mDispatcher.Dispatch( new SetAuthToken( token, refreshToken, true ));
+        public void SetRefreshToken( string token, string refreshToken, DateTime expiration ) {
+            mDispatcher.Dispatch( new SetAuthToken( token, refreshToken, expiration, true ));
         }
 
         public void AnnounceAuthStateUpdated( bool wasFresh ) {

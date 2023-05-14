@@ -2,7 +2,6 @@
 using FluentValidation;
 using FluentValidation.Results;
 using SpaceHelmet.Shared.Constants;
-using SpaceHelmet.Shared.Support;
 
 namespace SpaceHelmet.Shared.Dto.Auth {
     public class LoginUserRequest {
@@ -45,28 +44,28 @@ namespace SpaceHelmet.Shared.Dto.Auth {
             base( ex ) {
             Token = String.Empty;
             RefreshToken = String.Empty;
-            Expiration = DateTimeProvider.Instance.CurrentDateTime;
+            Expiration = DateTime.MinValue;
         }
 
         public LoginUserResponse( ValidationResult validationResult ) :
             base( validationResult ) {
             Token = String.Empty;
             RefreshToken = String.Empty;
-            Expiration = DateTimeProvider.Instance.CurrentDateTime;
+            Expiration = DateTime.MinValue;
         }
 
         public LoginUserResponse( string error ) :
             base( false, error  ) {
             Token = String.Empty;
             RefreshToken = String.Empty;
-            Expiration = DateTimeProvider.Instance.CurrentDateTime;
+            Expiration = DateTime.MinValue;
         }
 
         public LoginUserResponse( IEnumerable<string> errors ) :
             base( false, string.Join( Environment.NewLine, errors ) ) {
             Token = String.Empty;
             RefreshToken = String.Empty;
-            Expiration = DateTimeProvider.Instance.CurrentDateTime;
+            Expiration = DateTime.MinValue;
         }
     }
 

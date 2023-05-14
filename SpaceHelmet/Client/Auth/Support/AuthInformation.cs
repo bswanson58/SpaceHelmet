@@ -59,12 +59,17 @@ namespace SpaceHelmet.Client.Auth.Support {
             TokenExpirationTime( mAuthState.Value.UserToken );
 
         private TimeSpan TokenExpirationTime( string jwtToken ) {
-            var expiration = mTokenParser.GetClaimValue( jwtToken, ClaimValues.Expiration );
+            var tokenExpiration = mTokenParser.GetClaimValue( jwtToken, ClaimValues.Expiration );
+            var authExpiration = mAuthState.Value.TokenExpiration;
 
-            if(!String.IsNullOrWhiteSpace( expiration )) {
-                var expTime = DateTimeOffset.FromUnixTimeSeconds( Convert.ToInt64( expiration ));
-                    
-                return expTime - DateTimeProvider.Instance.CurrentUtcTime;
+            if(!String.IsNullOrWhiteSpace( tokenExpiration )) {
+                var tokenExpirationTime = DateTimeOffset.FromUnixTimeSeconds( Convert.ToInt64( tokenExpiration ));
+                var tokenExpirationOffset = tokenExpirationTime - DateTimeProvider.Instance.CurrentUtcTime;
+                var authExpirationOffset = authExpiration - DateTimeProvider.Instance.CurrentUtcTime;
+
+                return tokenExpirationOffset > authExpirationOffset ? 
+                    tokenExpirationOffset : 
+                    authExpirationOffset;
             }
 
             return TimeSpan.Zero;

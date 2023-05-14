@@ -1,12 +1,16 @@
-﻿namespace SpaceHelmet.Client.Auth.Actions {
-    public class SetAuthToken {
-        public  string  Token {  get; }
-        public  string  RefreshToken { get; }
-        public  bool    IsRefresh { get; }
+﻿using System;
 
-        public SetAuthToken( string token, string refreshToken, bool isRefresh ) {
+namespace SpaceHelmet.Client.Auth.Actions {
+    public class SetAuthToken {
+        public  string      Token {  get; }
+        public  string      RefreshToken { get; }
+        public  DateTime    Expiration { get; }
+        public  bool        IsRefresh { get; }
+
+        public SetAuthToken( string token, string refreshToken, DateTime expiration, bool isRefresh ) {
             Token = token;
             RefreshToken = refreshToken;
+            Expiration = expiration;
             IsRefresh = isRefresh;
         }
     }

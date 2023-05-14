@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Blazored.LocalStorage;
 using TokenClientSupport.Constants;
@@ -29,6 +30,16 @@ namespace SpaceHelmet.Client.Support {
 
         public async Task StoreRefreshToken( string token ) {
             await mLocalStorage.SetItemAsStringAsync( TokenStorageNames.RefreshToken, token );
+        }
+
+        public async Task<DateTime> GetTokenExpiration( CancellationToken token = new CancellationToken() ) {
+            var ticks = await mLocalStorage.GetItemAsync<long>( TokenStorageNames.TokenExpiration, token );
+
+            return DateTime.FromBinary( ticks );
+        }
+
+        public async Task StoreTokenExpiration( DateTime expiration ) {
+            await mLocalStorage.SetItemAsync( TokenStorageNames.TokenExpiration, expiration.Ticks );
         }
     }
 }

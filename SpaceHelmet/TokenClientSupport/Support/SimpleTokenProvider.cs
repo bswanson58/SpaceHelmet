@@ -5,17 +5,20 @@ using TokenClientSupport.Interfaces;
 
 namespace TokenClientSupport.Support {
     internal class SimpleTokenProvider : ITokenStorageProvider {
-        private string  mAuthenticationToken;
-        private string  mRefreshToken;
+        private string      mAuthenticationToken;
+        private string      mRefreshToken;
+        private DateTime    mExpiration;
 
         public SimpleTokenProvider() {
             mAuthenticationToken = String.Empty;
             mRefreshToken = String.Empty;
+            mExpiration = DateTime.MinValue;
         }
 
         public Task ClearTokenValues() {
             mAuthenticationToken = String.Empty;
             mRefreshToken = String.Empty;
+            mExpiration = DateTime.MinValue;
 
             return Task.CompletedTask;
         }
@@ -34,6 +37,15 @@ namespace TokenClientSupport.Support {
 
         public Task StoreRefreshToken( string token ) {
             mRefreshToken = token;
+
+            return Task.CompletedTask;
+        }
+
+        public Task<DateTime> GetTokenExpiration( CancellationToken token = new CancellationToken()) =>
+            Task.FromResult( mExpiration );
+
+        public Task StoreTokenExpiration( DateTime expiration ) {
+            mExpiration = expiration;
 
             return Task.CompletedTask;
         }

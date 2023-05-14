@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace TokenClientSupport.Interfaces {
@@ -10,5 +11,8 @@ namespace TokenClientSupport.Interfaces {
 
         Task<string>    GetRefreshToken( CancellationToken token = new());
         Task            StoreRefreshToken( string token );
+
+        Task<DateTime>  GetTokenExpiration( CancellationToken token = new());
+        Task            StoreTokenExpiration( DateTime expiration );
     }
 }

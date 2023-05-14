@@ -13,7 +13,8 @@ namespace SpaceHelmet.Client.Auth.Effects {
         }
 
         public override Task HandleAsync( LoginUserSuccessAction action, IDispatcher dispatcher ) {
-            mAuthFacade.SetAuthenticationToken( action.UserResponse.Token, action.UserResponse.RefreshToken );
+            mAuthFacade.SetAuthenticationToken( action.UserResponse.Token, action.UserResponse.RefreshToken, 
+                                                action.UserResponse.Expiration );
 
             return Task.CompletedTask;
         }

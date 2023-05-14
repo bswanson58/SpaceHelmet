@@ -120,19 +120,26 @@ namespace SpaceHelmet.Client.Support {
             // check to see if the authentication token has been updated during the call.
             IEnumerable<string> ? authValue = default;
             IEnumerable<string> ? refreshValue = default;
+            IEnumerable<string> ? expirationValue = default;
 
             response.RequestMessage?.Headers.TryGetValues( TokenStorageNames.AuthToken, out authValue );
             response.RequestMessage?.Headers.TryGetValues( TokenStorageNames.RefreshToken, out refreshValue );
+            response.RequestMessage?.Headers.TryGetValues( TokenStorageNames.TokenExpiration, out expirationValue );
 
             if(( authValue != null ) &&
-               ( refreshValue != null )) {
+               ( refreshValue != null ) &&
+               ( expirationValue != null )) {
                 var authToken = authValue.FirstOrDefault();
                 var refreshToken = refreshValue.FirstOrDefault();
+                var expiration = expirationValue.FirstOrDefault();
 
                 if((!String.IsNullOrWhiteSpace( authToken )) &&
                    (!String.IsNullOrWhiteSpace( refreshToken )) &&
+                   (!String.IsNullOrWhiteSpace( expiration )) &&
                    (!mAuthInformation.UserToken.Equals( authToken ))) {
-                    mAuthFacade.SetRefreshToken( authToken, refreshToken );
+                    if( Int64.TryParse( expiration, out var expirationTicks )) {
+                        mAuthFacade.SetRefreshToken( authToken, refreshToken, DateTime.FromBinary( expirationTicks ));
+                    }
                 }
             }
 

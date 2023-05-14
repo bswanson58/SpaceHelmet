@@ -15,24 +15,27 @@ namespace TokenClientSupport.Dto {
     }
 
     public class RefreshTokenResponse {
-        public  bool    Succeeded { get; }
-        public  string  Message { get; }
-        public  string  Token { get; set; }
-        public  string  RefreshToken { get; set; }
+        public  bool        Succeeded { get; }
+        public  string      Message { get; }
+        public  string      Token { get; set; }
+        public  string      RefreshToken { get; set; }
+        public  DateTime    TokenExpiration { get; set; }
 
         [JsonConstructor]
-        public RefreshTokenResponse( bool succeeded, string message, string token, string refreshToken ) {
+        public RefreshTokenResponse( bool succeeded, string message, string token, string refreshToken, DateTime tokenExpiration ) {
             Succeeded = succeeded;
             Message = message;
             Token = token;
             RefreshToken = refreshToken;
+            TokenExpiration = tokenExpiration;
         }
 
-        public RefreshTokenResponse( string token, string refreshToken ) {
+        public RefreshTokenResponse( string token, string refreshToken, DateTime tokenExpiration ) {
             Succeeded = true;
             Message = String.Empty;
             Token = token;
             RefreshToken = refreshToken;
+            TokenExpiration = tokenExpiration;
         }
 
         public RefreshTokenResponse( string error ) {
@@ -40,6 +43,7 @@ namespace TokenClientSupport.Dto {
             Message = error;
             Token = String.Empty;
             RefreshToken = String.Empty;
+            TokenExpiration = DateTime.MinValue;
         }
     }
 }

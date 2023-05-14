@@ -37,9 +37,10 @@ namespace SpaceHelmet.Client {
         public async Task OnStartup() {
             var token = await mTokenProvider.GetAuthenticationToken();
             var refresh = await mTokenProvider.GetRefreshToken();
+            var expiration = await mTokenProvider.GetTokenExpiration();
 
             if( mAuthInformation.IsTokenValid( token )) {
-                mAuthFacade.SetAuthenticationToken( token, refresh );
+                mAuthFacade.SetAuthenticationToken( token, refresh, expiration );
             }
             else {
                 mAuthFacade.ClearAuthenticationToken();
