@@ -2,20 +2,17 @@
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using TokenAuthentication.Interfaces;
 using TokenAuthentication.Settings;
 using TokenClientSupport.Support;
 
 namespace TokenAuthentication.RefreshTokens {
     public class RefreshTokenProvider : IRefreshTokenProvider {
-        private readonly RefreshTokenOptions    mTokenOptions;
+        private readonly IOptions<RefreshTokenOptions>  mTokenOptions;
 
-        public RefreshTokenProvider( IConfiguration configuration ) {
-            mTokenOptions = configuration
-                                .GetSection( nameof( RefreshTokenOptions ))
-                                .Get<RefreshTokenOptions>() ??
-                            new RefreshTokenOptions();
+        public RefreshTokenProvider( IOptions<RefreshTokenOptions> tokenOptions ) {
+            mTokenOptions = tokenOptions;
         }
 
         public Task<string> CreateAsync( ClaimsIdentity claimsPrincipal ) {
@@ -29,6 +26,6 @@ namespace TokenAuthentication.RefreshTokens {
         }
 
         public DateTime TokenExpiration() =>
-            DateTimeProvider.Instance.CurrentUtcTime + mTokenOptions.RefreshTokenExpiration;
+            DateTimeProvider.Instance.CurrentUtcTime + mTokenOptions.Value.RefreshTokenExpiration;
     }
 }

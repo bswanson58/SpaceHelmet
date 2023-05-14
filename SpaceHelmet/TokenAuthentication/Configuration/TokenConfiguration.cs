@@ -41,6 +41,8 @@ namespace TokenAuthentication.Configuration {
             else {
                 services.AddScoped<IRefreshTokenProvider, NullRefreshTokenProvider>();
             }
+
+            services.Configure<RefreshTokenOptions>( configuration.GetSection( nameof( RefreshTokenOptions )));
         }
 
         private static void AddPasetoTokens( IServiceCollection services, ConfigurationManager configuration ) {
