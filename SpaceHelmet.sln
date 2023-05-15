@@ -7,6 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tooling", "Tooling", "{86D7
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 		Directory.Build.props = Directory.Build.props
+		ReadMe.md = ReadMe.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpaceHelmet.Server", "SpaceHelmet\Server\SpaceHelmet.Server.csproj", "{8DCD9AEE-3C81-487D-A5CE-899BAB550D33}"
@@ -17,7 +18,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SpaceHelmet.Shared", "Space
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TokenAuthentication", "SpaceHelmet\TokenAuthentication\TokenAuthentication.csproj", "{4A16250F-83E4-4F6B-868F-565EC6F24767}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TokenClientSupport", "SpaceHelmet\TokenClientSupport\TokenClientSupport.csproj", "{42087A82-F6CD-46FA-AC37-AB5EAD8ACFBC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TokenClientSupport", "SpaceHelmet\TokenClientSupport\TokenClientSupport.csproj", "{42087A82-F6CD-46FA-AC37-AB5EAD8ACFBC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,4 +1,4 @@
-# SpaceHelmet
+## SpaceHelmet
 
 ###### Safety in Space
 
@@ -10,7 +10,7 @@ SpaceHelmet is a Blazor WebAssembly style project with the typical server/client
 
 Microsoft AspNetCore, currently on framework version 7.
 
-[Ardalis.ApiEndpoints]([ardalis/ApiEndpoints: A project for supporting API Endpoints in ASP.NET Core web applications. (github.com)](https://github.com/ardalis/ApiEndpoints)) to support clean API endpoints.
+[Ardalis.Endpoints] to support clean API endpoints.
 
 [FluentValidation]([FluentValidation/FluentValidation: A popular .NET validation library for building strongly-typed validation rules. (github.com)](https://github.com/FluentValidation/FluentValidation)) to validate DTO input to the server endpoints.
 
@@ -19,3 +19,11 @@ Microsoft AspNetCore, currently on framework version 7.
 [Fluxor]([mrpmorris/Fluxor: Fluxor is a zero boilerplate Flux/Redux library for Microsoft .NET and Blazor. (github.com)](https://github.com/mrpmorris/Fluxor)) for client state management.
 
 [Paseto.Core]([daviddesmet/paseto-dotnet: 🔑 Paseto.NET, a Paseto (Platform-Agnostic Security Tokens) implementation for .NET (github.com)](https://github.com/daviddesmet/paseto-dotnet))for Paseto token support.
+
+
+
+
+
+
+
+[Ardalis.Endpoints]: https://github.com/ardalis/ApiEndpoints
