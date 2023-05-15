@@ -12,13 +12,13 @@ Microsoft AspNetCore, currently on framework version 7.
 
 [Ardalis.Endpoints] to support clean API endpoints.
 
-[FluentValidation]([FluentValidation/FluentValidation: A popular .NET validation library for building strongly-typed validation rules. (github.com)](https://github.com/FluentValidation/FluentValidation)) to validate DTO input to the server endpoints.
+[FluentValidation] to validate DTO input to the server endpoints.
 
-[MudBlazor]([MudBlazor/MudBlazor: Blazor Component Library based on Material design with an emphasis on ease of use. Mainly written in C# with Javascript kept to a bare minimum it empowers .NET developers to easily debug it if needed. (github.com)](https://github.com/MudBlazor/MudBlazor/)) for client user interface.
+[MudBlazor] for client user interface.
 
-[Fluxor]([mrpmorris/Fluxor: Fluxor is a zero boilerplate Flux/Redux library for Microsoft .NET and Blazor. (github.com)](https://github.com/mrpmorris/Fluxor)) for client state management.
+[Fluxor] for client state management.
 
-[Paseto.Core]([daviddesmet/paseto-dotnet: 🔑 Paseto.NET, a Paseto (Platform-Agnostic Security Tokens) implementation for .NET (github.com)](https://github.com/daviddesmet/paseto-dotnet))for Paseto token support.
+[Paseto.Core] for Paseto token support.
 
 
 
@@ -27,3 +27,11 @@ Microsoft AspNetCore, currently on framework version 7.
 
 
 [Ardalis.Endpoints]: https://github.com/ardalis/ApiEndpoints
+
+[FluentValidation]: https://github.com/FluentValidation/FluentValidation
+
+[MudBlazor]: https://github.com/MudBlazor/MudBlazor
+
+[Fluxor]: https://github.com/mrpmorris/Fluxor
+
+[Paseto.Core]: https://github.com/daviddesmet/paseto-dotnet
