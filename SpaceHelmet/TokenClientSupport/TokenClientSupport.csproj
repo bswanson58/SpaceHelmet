@@ -3,6 +3,12 @@
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
+    <PackageId>SecretSquirrelSoftware.$(AssemblyName)</PackageId>
+    <Authors>SecretSquirrelSoftware</Authors>
+    <Description>Pseto and Json Web Token (JWT) support for Blazor web clients.</Description>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/bswanson58/SpaceHelmet</RepositoryUrl>
+    <PackageTags>Paseto,JWT,Blazor,token security,web api</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
